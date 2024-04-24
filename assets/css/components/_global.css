@@ -1,0 +1,21 @@
+html {
+    @apply min-h-screen bg-slate-100 text-slate-700;
+
+    &.dark {
+        @apply bg-slate-950;
+
+        body {
+            @apply text-slate-200;
+
+            *,
+            ::before,
+            ::after {
+                @apply border-white/5;
+            }
+        }
+    }
+
+    & body {
+        @apply m-0 antialiased;
+    }
+}
