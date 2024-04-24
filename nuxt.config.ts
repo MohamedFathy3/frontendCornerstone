@@ -10,6 +10,10 @@ export default defineNuxtConfig({
             },
         },
     },
+    sourcemap: {
+        server: true,
+        client: true,
+    },
     pinia: {
         autoImports: ['defineStore'],
     },

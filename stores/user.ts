@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', () => {
             body: data,
             lazy: true,
         });
-        if (userData.value) {
+        if (userData && userData.value) {
             const userToken = (userData.value as BackendResponse).data as string;
             setToken(userToken);
             useToast({ title: 'Welcome', message: 'Loggedin Successfully', type: 'success', duration: 5000 });
