@@ -216,7 +216,7 @@ onMounted(async () => {
             <span>{{ label }}</span>
             <span v-if="label && required" class="ml-1 text-sm text-danger">*</span>
         </div>
-        <div v-if="file && file.fullUrl" class="relative group bg-white flex justify-center ease-in-out duration-300 px-6 pt-5 pb-6 rounded-xl">
+        <div v-if="file && file.fullUrl" class="relative group border-2 border-dashed bg-white flex justify-center ease-in-out duration-300 px-6 pt-5 pb-6 rounded-xl">
             <div class="absolute inset-0 hidden group-hover:flex items-center justify-center z-10 ease-in-out duration-300 group gap-5">
                 <label :for="name + '-update-file'" class="btn btn-primary btn-rounded whitespace-nowrap btn-sm">
                     <Icon name="solar:gallery-send-broken" class="h-5 w-5 mr-2" />
@@ -228,7 +228,7 @@ onMounted(async () => {
                     <span>Remove</span>
                 </button>
             </div>
-            <NuxtImg :src="file.fullUrl" alt="company-logo" class="z-5 w-full h-36 group-hover:blur-md object-contain ease-in-out duration-300" />
+            <NuxtImg :src="file.fullUrl" alt="company-logo" class="z-5 w-full rounded-xl h-36 group-hover:blur-md object-contain ease-in-out duration-300" />
         </div>
         <div v-else-if="uploading" class="bg-white flex justify-center ease-in-out duration-300 px-6 pt-5 pb-6 rounded-xl min-h-36">
             <Icon name="eos-icons:three-dots-loading" class="h-14 w-14" />

@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import Uploader from '~/components/Form/Uploader.vue';
+<script setup>
+import VueDatePicker from '@vuepic/vue-datepicker';
 
 definePageMeta({
     layout: 'dashboard',
@@ -21,16 +21,55 @@ const selectedSectionIndex = ref(0);
 function setSelectedSectionIndex(index) {
     selectedSectionIndex.value = index;
 }
+
+const updateSettings = async () => {
+    const originalSettingsArray = rows.value[selectedSectionIndex.value].children;
+    const updateArrayValues = originalSettingsArray.map((item) => ({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        value: item.value,
+    }));
+
+    const { data, error } = await useApiFetch(`/api/setting-sections`, {
+        method: 'PATCH',
+        body: {
+            fields: updateArrayValues,
+        },
+        lazy: true,
+    });
+
+    if (data.value) {
+        useToast({ title: 'Success', message: data.value.message, type: 'success', duration: 5000 });
+        await refresh();
+    }
+    if (error.value) {
+        useToast({ title: 'Error', message: data.value.message, type: 'error', duration: 5000 });
+    }
+
+    console.log('updating settings', updateArrayValues);
+};
+const buttonStyles = ref([
+    { name: 'Primary', id: 'primary' },
+    { name: 'Secondary', id: 'secondary' },
+    { name: 'Success', id: 'success' },
+    { name: 'Yellow', id: 'warning' },
+    { name: 'Red', id: 'danger' },
+    { name: 'Dark', id: 'dark' },
+]);
+const buttonTargets = ref([
+    { name: 'Self (Same Tab)', id: '_self' },
+    { name: 'New Tab', id: '_blank' },
+]);
 </script>
 <template>
     <div v-if="!pending && rows" class="grid lg:grid-cols-12 gap-5 items-start">
-        <!-- BEGIN: Settings Sections -->
         <div class="2xl:col-span-3 lg:col-span-3">
             <div class="intro-y first:my-0">
                 <ul class="text-sm font-medium">
                     <template v-for="(section, index) in rows" :key="section.id">
                         <li :class="[index === selectedSectionIndex ? 'text-white bg-primary' : 'bg-slate-100', 'intro-y cursor-pointer group hover:bg-slate-900 p-3 my-1 rounded-md ease-in-out duration-150']" @click="setSelectedSectionIndex(index)">
-                            <div :class="[section.id === selectedSectionId ? 'text-white' : '', 'group-hover:text-white group-hover:translate-x-4 flex items-center ease-in-out duration-150']">
+                            <div :class="[index === selectedSectionIndex ? 'text-white' : '', 'group-hover:text-white group-hover:translate-x-4 flex items-center ease-in-out duration-150']">
                                 <Icon name="solar:double-alt-arrow-right-linear" class="w-4 h-4 mr-2 opacity-50" />
                                 {{ section.label }}
                             </div>
@@ -45,78 +84,62 @@ function setSelectedSectionIndex(index) {
                     <div class="font-medium truncate">{{ rows[selectedSectionIndex].label }}</div>
                 </div>
                 <div class="grow">
-                    <div>
-                        <div>Data</div>
-                        <div class="space-y-8">
-                            <template v-for="field in rows[selectedSectionIndex].children" :key="field.id">
-                                <template v-if="field.type === 'text' || field.type === 'number' || field.type === 'textarea'">
-                                    <FormInputField v-model="field.value" :label="field.label" class="intro-y" :name="field.name" :type="field.type" :placeholder="field.placeholder" />
-                                </template>
-                                <template v-if="field.type === 'boolean'">
-                                    <div class="lg:col-span-6">
-                                        <div data-tw-merge class="flex items-center justify-between gap-5">
-                                            <label for="active-switch" class="cursor-pointer text-sm font-medium capitalize">
-                                                <span>{{ field.name }}</span>
-                                            </label>
-                                            <input id="active-switch" v-model.number="field.value" type="checkbox" class="form-checkbox-input" />
-                                        </div>
+                    <div class="space-y-8">
+                        <template v-for="field in rows[selectedSectionIndex].children" :key="field.id">
+                            <template v-if="field.type === 'text' || field.type === 'number' || field.type === 'textarea'">
+                                <FormInputField v-model="field.value" :label="field.label" class="intro-y" :name="field.name" :type="field.type" :placeholder="field.placeholder" />
+                            </template>
+                            <template v-if="field.type === 'boolean'">
+                                <div class="lg:col-span-6">
+                                    <div data-tw-merge class="flex items-center justify-between gap-5">
+                                        <label for="active-switch" class="cursor-pointer text-sm font-medium capitalize">
+                                            <span>{{ field.name }}</span>
+                                        </label>
+                                        <input id="active-switch" v-model.number="field.value" type="checkbox" class="form-checkbox-input" />
                                     </div>
-                                </template>
-                                <template v-if="field.type === 'select'">
-                                    <FormSelectField v-model.number="field.value" class="intro-y" label-value="name" key-value="id" :select-data="getSelectData(field.data)" :label="field.label" :name="field.name" :placeholder="field.placeholder" />
-                                </template>
-                                <template v-if="field.type === 'uploader'">
-                                    <FormUploader v-model="field.value" :allowed-types="['image', 'svg']" :label="field.label" class="intro-y" :name="field.name" :max="1" />
-                                </template>
-                                <template v-if="field.type === 'button'">
-                                    <div>
-                                        <div>{{ field.label }}</div>
-                                        <div class="mt-3 rounded-md p-5 border border-slate-100 grid grid-cols-12 gap-5 bg-slate-50">
-                                            <FormInputField
-                                                v-model="field.value.label"
-                                                class="col-span-12 sm:col-span-6"
-                                                :label="$t('forms.attributes.label')"
-                                                :name="section.slug + '-button-label-' + section.id"
-                                                :placeholder="$t('forms.attributes.label')"
-                                            />
-                                            <FormInputField
-                                                v-model="field.value.icon"
-                                                class="col-span-12 sm:col-span-6"
-                                                :label="$t('forms.attributes.icon')"
-                                                :name="section.slug + '-button-icon-' + section.id"
-                                                :placeholder="$t('forms.attributes.icon')"
-                                            />
-                                            <FormSelectField
-                                                v-model="field.value.style"
-                                                label-value="name"
-                                                key-value="id"
-                                                :select-data="buttonStyles"
-                                                class="col-span-12 sm:col-span-6"
-                                                :label="$t('forms.attributes.buttonStyle')"
-                                                :name="field.slug + '-button-style-' + field.id"
-                                                :placeholder="$t('forms.attributes.buttonStyle')"
-                                            />
-                                            <FormSelectField
-                                                v-model="field.value.target"
-                                                label-value="name"
-                                                key-value="id"
-                                                :select-data="buttonTargets"
-                                                class="col-span-12 sm:col-span-6"
-                                                :label="$t('forms.attributes.buttonTarget')"
-                                                :name="field.slug + '-button-target-' + field.id"
-                                                :placeholder="$t('forms.attributes.buttonTarget')"
-                                            />
-                                            <FormInputField
-                                                v-model="field.value.url"
-                                                class="col-span-12 sm:col-span-6"
-                                                :label="$t('forms.attributes.url')"
-                                                :name="section.slug + '-button-url-' + section.id"
-                                                :placeholder="$t('forms.attributes.url')"
-                                            />
-                                        </div>
+                                </div>
+                            </template>
+                            <template v-if="field.type === 'select'">
+                                <FormSelectField v-model.number="field.value" class="intro-y" label-value="name" key-value="id" :select-data="getSelectData(field.data)" :label="field.label" :name="field.name" :placeholder="field.placeholder" />
+                            </template>
+                            <template v-if="field.type === 'uploader'">
+                                <FormUploader v-model="field.value" :allowed-types="['image', 'svg']" :label="field.label" class="intro-y" :name="field.name" :max="1" />
+                            </template>
+                            <template v-if="field.type === 'button'">
+                                <div>
+                                    <div>{{ field.label }}</div>
+                                    <div class="mt-3 rounded-md p-5 border border-slate-100 grid grid-cols-12 gap-5 bg-slate-50">
+                                        <FormInputField v-model="field.value.label" class="col-span-12 sm:col-span-6" label="Label" :name="field.name + '-button-label-' + field.id" placeholder="Label" />
+                                        <FormInputField v-model="field.value.icon" class="col-span-12 sm:col-span-6" label="Icon" :name="field.name + '-button-icon-' + field.id" placeholder="Icon" />
+                                        <FormSelectField
+                                            v-model="field.value.style"
+                                            class="col-span-12 sm:col-span-6"
+                                            :select-data="buttonStyles"
+                                            labelvalue="name"
+                                            label="Style"
+                                            keyvalue="id"
+                                            :name="field.name + '-button-style-' + field.id"
+                                            placeholder="Style"
+                                        />
+                                        <FormSelectField
+                                            v-model="field.value.target"
+                                            class="col-span-12 sm:col-span-6"
+                                            :select-data="buttonTargets"
+                                            labelvalue="name"
+                                            label="Target"
+                                            keyvalue="id"
+                                            :name="field.name + '-button-target-' + field.id"
+                                            placeholder="Url Target"
+                                        />
+                                        <FormInputField v-model="field.value.url" class="col-span-12 sm:col-span-6" label="Url" :name="field.name + '-button-url-' + field.id" placeholder="Url" />
                                     </div>
-                                </template>
-                                <!--                                <template v-if="field.type === 'list'">-->
+                                </div>
+                            </template>
+                            <template v-if="field.type === 'list'">
+                                <pre>
+                                        {{ field.value }}
+                                    </pre
+                                >
                                 <!--                                    <div>-->
                                 <!--                                        <div class="flex items-center justify-between gap-5">-->
                                 <!--                                            <div>{{ field.label }}</div>-->
@@ -141,7 +164,7 @@ function setSelectedSectionIndex(index) {
                                 <!--                                                    <div class="sm:col-span-3 flex items-center space-x-4">-->
                                 <!--                                                        <button type="button" class="btn btn-sm group-hover:btn-dark btn-secondary grow" @click="openItemModal(itemIndex, field.id)">Update</button>-->
                                 <!--                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(itemIndex, field.id)">-->
-                                <!--                                                            <XIcon class="w-4 h-4" />-->
+                                <!--                                                            <Icon name="solar:close-square-linear" class="w-4 h-4" />-->
                                 <!--                                                        </button>-->
                                 <!--                                                    </div>-->
                                 <!--                                                </div>-->
@@ -155,7 +178,7 @@ function setSelectedSectionIndex(index) {
                                 <!--                                                    <div class="sm:col-span-3 flex items-center space-x-4">-->
                                 <!--                                                        <button type="button" class="btn btn-sm group-hover:btn-dark btn-secondary grow" @click="openItemModal(itemIndex, field.id)">Update</button>-->
                                 <!--                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(itemIndex, field.id)">-->
-                                <!--                                                            <XIcon class="w-4 h-4" />-->
+                                <!--                                                            <Icon name="solar:close-square-linear" class="w-4 h-4" />-->
                                 <!--                                                        </button>-->
                                 <!--                                                    </div>-->
                                 <!--                                                </div>-->
@@ -170,32 +193,31 @@ function setSelectedSectionIndex(index) {
                                 <!--                                                    <div class="sm:col-span-3 flex items-center space-x-4">-->
                                 <!--                                                        <button type="button" class="btn btn-sm group-hover:btn-dark btn-secondary grow" @click="openItemModal(itemIndex, field.id)">Update</button>-->
                                 <!--                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(itemIndex, field.id)">-->
-                                <!--                                                            <XIcon class="w-4 h-4" />-->
+                                <!--                                                            <Icon name="solar:close-square-linear" class="w-4 h-4" />-->
                                 <!--                                                        </button>-->
                                 <!--                                                    </div>-->
                                 <!--                                                </div>-->
                                 <!--                                            </template>-->
                                 <!--                                        </div>-->
                                 <!--                                    </div>-->
-                                <!--                                </template>-->
-                                <!--                                <template v-if="field.type === 'datetime'">-->
-                                <!--                                    <div>-->
-                                <!--                                        <div>{{ field.label }}</div>-->
-                                <!--                                        <VueDatePicker v-model="field.value" class="mt-3" :auto-apply="true" :teleport="true" :time-picker-inline="true" format="dd-MM-yyyy - HH:mm" />-->
-                                <!--                                    </div>-->
-                                <!--                                </template>-->
-                                <!--                                <template v-if="field.type === 'datetime_range'">-->
-                                <!--                                    <div>-->
-                                <!--                                        <div>{{ field.label }}</div>-->
-                                <!--                                        <VueDatePicker v-model="field.value" range class="mt-3" :teleport="true" :auto-apply="true" :enable-time-picker="false" format="dd-MM-yyyy" />-->
-                                <!--                                    </div>-->
-                                <!--                                </template>-->
                             </template>
-                        </div>
+                            <template v-if="field.type === 'datetime'">
+                                <div>
+                                    <div>{{ field.label }}</div>
+                                    <VueDatePicker v-model="field.value" class="mt-3" :auto-apply="true" :teleport="true" :time-picker-inline="true" format="dd-MM-yyyy - HH:mm" />
+                                </div>
+                            </template>
+                            <template v-if="field.type === 'datetime_range'">
+                                <div>
+                                    <div>{{ field.label }}</div>
+                                    <VueDatePicker v-model="field.value" range class="mt-3" :teleport="true" :auto-apply="true" :enable-time-picker="false" format="dd-MM-yyyy" />
+                                </div>
+                            </template>
+                        </template>
                     </div>
                 </div>
                 <div class="pt-5 mt-5 border-t border-slate-200/60 dark:border-darkmode-400">
-                    <button class="btn btn-primary btn-lg w-full" :disabled="isLoading" type="submit">Update</button>
+                    <button class="btn btn-primary btn-lg w-full" :disabled="isLoading" type="submit" @click="updateSettings">Update</button>
                 </div>
             </div>
         </div>

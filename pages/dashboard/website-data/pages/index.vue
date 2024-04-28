@@ -1,5 +1,5 @@
 <script setup>
-import { email, helpers, numeric, required } from '@vuelidate/validators';
+import { required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 definePageMeta({
@@ -19,7 +19,7 @@ const {
     data: rows,
     pending,
     refresh,
-} = await useApiFetch(`/api/user`, {
+} = await useApiFetch(`/api/page`, {
     query: serverParams.value,
     lazy: true,
     transform: (rows) => {
@@ -47,7 +47,7 @@ const resetSearch = async () => {
 async function deleteItem(id) {
     const confirmed = confirm('Are you sure you want to delete this item?');
     if (confirmed) {
-        const { data, error } = await useApiFetch(`/api/user/${id}`, {
+        const { data, error } = await useApiFetch(`/api/page/${id}`, {
             method: 'DELETE',
             lazy: true,
         });
@@ -63,33 +63,45 @@ async function deleteItem(id) {
 
 const item = ref({
     name: null,
-    email: null,
-    password: null,
+    title: null,
+    slug: null,
+    keywords: null,
+    description: null,
+    active: true,
+    position: null,
     image: null,
 });
 const rules = ref({
     name: { required },
-    email: { required, email },
-    password: {},
+    title: { required },
+    slug: { required },
+    keywords: {},
+    description: {},
+    active: {},
+    position: {},
     image: {},
 });
-const v$ = useVuelidate(rules, item);
 
 async function resetItemValues() {
     item.value.name = null;
-    item.value.email = null;
-    item.value.password = null;
+    item.value.title = null;
+    item.value.slug = null;
+    item.value.keywords = null;
+    item.value.description = null;
+    item.value.active = true;
+    item.value.position = null;
     item.value.image = null;
 }
 async function closeModal() {
     isOpen.value = false;
     editMode.value = false;
+    currentOpenTab.value = 'details';
     v$.value.$reset();
     await resetItemValues();
 }
 
 async function addItem() {
-    const { data, error } = await useApiFetch(`/api/user`, {
+    const { data, error } = await useApiFetch(`/api/page`, {
         method: 'POST',
         body: item,
         lazy: true,
@@ -105,7 +117,7 @@ async function addItem() {
 }
 
 const fetchItem = async (id) => {
-    const { data, error } = await useApiFetch(`/api/user/${id}`, {
+    const { data, error } = await useApiFetch(`/api/page/${id}`, {
         method: 'GET',
         lazy: true,
     });
@@ -129,7 +141,7 @@ async function openModal(id = null) {
 }
 
 async function updateItem() {
-    const { data, error } = await useApiFetch(`/api/user/${item.value.id}`, {
+    const { data, error } = await useApiFetch(`/api/page/${item.value.id}`, {
         method: 'PATCH',
         body: item.value,
         lazy: true,
@@ -160,7 +172,7 @@ async function handleModalSubmit() {
 <template>
     <div class="flex flex-col gap-5">
         <div class="flex items-center justify-between">
-            <div class="text-lg font-medium">Users</div>
+            <div class="text-lg font-medium">Pages</div>
             <div>
                 <button class="btn btn-primary" @click="openModal()">Add New</button>
             </div>
@@ -175,6 +187,7 @@ async function handleModalSubmit() {
                 <thead>
                     <tr class="text-sm uppercase">
                         <th>Name</th>
+                        <th>Active</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -189,18 +202,27 @@ async function handleModalSubmit() {
                                         </div>
                                         <div>
                                             <div class="font-medium">{{ row.name }}</div>
-                                            <div class="text-xs">{{ row.email }}</div>
+                                            <div class="text-xs mt-1">{{ row.slug }}</div>
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    <div v-if="row.slug !== 'home'">
+                                        <Icon v-if="row.active" name="solar:check-circle-linear" class="size-7 text-success" />
+                                        <Icon v-else name="solar:close-circle-linear" class="size-7 text-danger" />
+                                    </div>
+                                    <div v-else class="opacity-75 font-medium italic">Default Home</div>
                                 </td>
 
                                 <td>
                                     <div class="flex items-center gap-3">
-                                        <button class="px-2 py-1.5 flex items-center text-primary gap-2" @click="openModal(row.id)">
-                                            <Icon name="solar:pen-new-square-linear" class="w-4 h-4 shrink-0" />
-                                            <span class="font-medium">Edit</span>
-                                        </button>
-                                        <button class="px-2 py-1.5 flex items-center text-danger gap-2" @click="deleteItem(row.id)">
+                                        <NuxtLink :to="'/dashboard/website-data/pages/' + row.id">
+                                            <button class="px-2 py-1.5 flex items-center text-primary gap-2">
+                                                <Icon name="solar:eye-linear" class="w-4 h-4 shrink-0" />
+                                                <span class="font-medium">Show</span>
+                                            </button>
+                                        </NuxtLink>
+                                        <button v-if="row.slug !== 'home'" class="px-2 py-1.5 flex items-center text-danger gap-2" @click="deleteItem(row.id)">
                                             <Icon name="solar:trash-bin-minimalistic-linear" class="w-4 h-4 shrink-0" />
                                             <span class="font-medium">Delete</span>
                                         </button>
@@ -264,14 +286,25 @@ async function handleModalSubmit() {
                 </div>
             </template>
             <template #content>
-                <div class="grid lg:grid-cols-12 gap-5 items-start">
-                    <div class="lg:col-span-4">
-                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Profile Image" name="image" />
-                    </div>
-                    <div class="lg:col-span-8 grid lg:grid-cols-12 gap-5 items-center">
-                        <FormInputField v-model="item.name" name="name" :errors="v$.name.$errors" placeholder="Name" label="Name" class="lg:col-span-12" />
-                        <FormInputField v-model="item.email" name="email" :errors="v$.email.$errors" placeholder="Email" label="Email" class="lg:col-span-12" />
-                        <FormInputField v-model="item.password" name="password" :errors="v$.password.$errors" placeholder="Password" label="Password" class="lg:col-span-12" />
+                <div>
+                    <div class="p-4 border rounded-xl mt-2 bg-slate-50">
+                        <div class="grid lg:grid-cols-12 gap-5 items-center">
+                            <FormUploader v-model="item.image" :allowed-types="['image']" label="SEO Image Cover" name="image" class="lg:col-span-12" />
+                            <FormInputField v-model="item.title" name="title" :errors="v$.title.$errors" placeholder="Title" label="Title" class="lg:col-span-12" description="This will be used for Page Title tag in SEO" />
+                            <FormInputField v-model="item.name" name="name" :errors="v$.name.$errors" placeholder="Name" label="Name" class="lg:col-span-6" description="This will be used for Admin dashboard index display" />
+                            <FormInputField v-model="item.slug" name="slug" :errors="v$.slug.$errors" placeholder="Slug" label="Slug" class="lg:col-span-6" description="Must be unique and without any spaces for example: my-page-name" />
+                            <FormInputField v-model="item.keywords" name="keywords" type="textarea" :errors="v$.keywords.$errors" placeholder="Keywords" label="Keywords" class="lg:col-span-12" />
+                            <FormInputField v-model="item.description" name="description" type="textarea" :errors="v$.description.$errors" placeholder="Description" label="Description" class="lg:col-span-12" />
+                            <div class="lg:col-span-6">
+                                <div data-tw-merge class="flex items-center">
+                                    <input id="active-switch" v-model="item.active" type="checkbox" class="form-checkbox-input" />
+                                    <label for="active-switch" class="cursor-pointer ml-4 text-sm font-medium capitalize">
+                                        <span :class="[item.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.active ? 'Active' : 'Inactive'"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <FormInputField v-model="item.position" name="position" :errors="v$.position.$errors" placeholder="Position" label="Position" class="lg:col-span-6" />
+                        </div>
                     </div>
                 </div>
             </template>

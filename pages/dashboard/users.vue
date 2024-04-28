@@ -13,13 +13,13 @@ const serverParams = ref({
 });
 const formLoading = ref(false);
 const isOpen = ref(false);
-
+const userStore = useUserStore();
 const editMode = ref(false);
 const {
     data: rows,
     pending,
     refresh,
-} = await useApiFetch(`/api/service`, {
+} = await useApiFetch(`/api/member`, {
     query: serverParams.value,
     lazy: true,
     transform: (rows) => {
@@ -47,7 +47,7 @@ const resetSearch = async () => {
 async function deleteItem(id) {
     const confirmed = confirm('Are you sure you want to delete this item?');
     if (confirmed) {
-        const { data, error } = await useApiFetch(`/api/service/${id}`, {
+        const { data, error } = await useApiFetch(`/api/member/${id}`, {
             method: 'DELETE',
             lazy: true,
         });
@@ -89,7 +89,7 @@ async function closeModal() {
 }
 
 async function addItem() {
-    const { data, error } = await useApiFetch(`/api/service`, {
+    const { data, error } = await useApiFetch(`/api/member`, {
         method: 'POST',
         body: item,
         lazy: true,
@@ -105,7 +105,7 @@ async function addItem() {
 }
 
 const fetchItem = async (id) => {
-    const { data, error } = await useApiFetch(`/api/service/${id}`, {
+    const { data, error } = await useApiFetch(`/api/member/${id}`, {
         method: 'GET',
         lazy: true,
     });
@@ -129,13 +129,16 @@ async function openModal(id = null) {
 }
 
 async function updateItem() {
-    const { data, error } = await useApiFetch(`/api/service/${item.value.id}`, {
+    const { data, error } = await useApiFetch(`/api/member/${item.value.id}`, {
         method: 'PATCH',
         body: item.value,
         lazy: true,
     });
     if (data.value) {
         useToast({ title: 'Success', message: data.value.message, type: 'success', duration: 5000 });
+        if (userStore.user.id === item.value.id) {
+            await userStore.fetchAuthUser();
+        }
         await closeModal();
         await refresh();
     } else {
@@ -160,7 +163,7 @@ async function handleModalSubmit() {
 <template>
     <div class="flex flex-col gap-5">
         <div class="flex items-center justify-between">
-            <div class="text-lg font-medium">Services</div>
+            <div class="text-lg font-medium">Users</div>
             <div>
                 <button class="btn btn-primary" @click="openModal()">Add New</button>
             </div>
@@ -175,8 +178,6 @@ async function handleModalSubmit() {
                 <thead>
                     <tr class="text-sm uppercase">
                         <th>Name</th>
-                        <th>Show In Home</th>
-                        <th>Active</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -186,25 +187,13 @@ async function handleModalSubmit() {
                             <tr v-for="(row, index) in rows.data" :key="index" class="text-sm">
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-20 h-10">
-                                            <NuxtImg v-if="row.imageUrl" class="w-20 h-10 object-cover bg-white !rounded-md" :src="row.imageUrl" :alt="row.name" :title="row.name" />
+                                        <div class="w-10 h-10">
+                                            <NuxtImg v-if="row.imageUrl" class="w-10 h-10 object-cover bg-white !rounded-full" :src="row.imageUrl" :alt="row.name" :title="row.name" />
                                         </div>
                                         <div>
                                             <div class="font-medium">{{ row.name }}</div>
-                                            <div class="text-xs mt-1">{{ row.slug }}</div>
+                                            <div class="text-xs">{{ row.email }}</div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <Icon v-if="row.showHome" name="solar:check-circle-linear" class="size-7 text-success" />
-                                        <Icon v-else name="solar:close-circle-linear" class="size-7 text-danger" />
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <Icon v-if="row.active" name="solar:check-circle-linear" class="size-7 text-success" />
-                                        <Icon v-else name="solar:close-circle-linear" class="size-7 text-danger" />
                                     </div>
                                 </td>
 
@@ -280,7 +269,7 @@ async function handleModalSubmit() {
             <template #content>
                 <div class="grid lg:grid-cols-12 gap-5 items-start">
                     <div class="lg:col-span-4">
-                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Image" name="image" />
+                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Profile Image" name="image" />
                     </div>
                     <div class="lg:col-span-8 grid lg:grid-cols-12 gap-5 items-center">
                         <FormInputField v-model="item.name" name="name" :errors="v$.name.$errors" placeholder="Name" label="Name" class="lg:col-span-12" />

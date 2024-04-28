@@ -119,7 +119,6 @@ async function sendMessage() {
                         name="country-name"
                         :errors="v$.countryId.$errors"
                         placeholder="Select your country"
-                        rounded
                     />
                     <FormInputField v-model="contactForm.content" :disabled="formIsLoading" :errors="v$.content.$errors" placeholder="Message" name="content" type="textarea" />
                     <button :disabled="formIsLoading" class="w-full btn btn-primary px-6">{{ formIsLoading ? 'Sending Message...' : 'Send' }}</button>
