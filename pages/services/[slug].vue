@@ -19,7 +19,6 @@ const { data: service, pending } = await useApiFetch(`/api/show-service/${route.
         </div>
         <div class="px-6 sm:px-12">
             <div class="-mt-12 container box p-8 px-6 sm:px-12 space-y-5 mb-5 shadow-none">
-                <div v-if="service.shortDescription" class="font-light" v-html="service.shortDescription" />
                 <div v-if="service.description" class="font-light" v-html="service.description" />
                 <ul v-if="service.list.length > 0" class="font-light divide-y divide-dashed">
                     <template v-for="(item, i) in service.list" :key="i">
