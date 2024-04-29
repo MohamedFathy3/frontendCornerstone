@@ -295,45 +295,46 @@ async function handleModalSubmit() {
             </template>
             <template #content>
                 <div class="grid lg:grid-cols-12 gap-5 items-start">
-                    <div class="lg:col-span-4">
-                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Image" name="image" />
+                    <FormInputField v-model="item.name" :errors="v$.name.$errors" class="lg:col-span-12" label="Name" name="name" placeholder="Name" />
+                    <FormInputField v-model="item.subTitle" :errors="v$.subTitle.$errors" class="lg:col-span-12" label="Sub Title" name="sub-title" placeholder="Sub Title" />
+                    <FormUploader v-model="item.image" :allowed-types="['image']" class="lg:col-span-12" label="Image" name="image" />
+                    <FormInputField v-model="item.slug" :disabled="editMode" :errors="v$.slug.$errors" :readonly="editMode" class="lg:col-span-12" label="Slug" name="slug" placeholder="Slug" />
+                    <FormInputField v-model="item.shortDescription" :errors="v$.shortDescription.$errors" class="lg:col-span-12" label="Short Description" name="name" placeholder="Short Description" type="textarea" />
+                    <FormInputField v-model="item.description" :errors="v$.description.$errors" class="lg:col-span-12" label="Description" name="short-description" placeholder="Description" type="textarea" />
+                    <FormInputField v-model="item.position" :errors="v$.position.$errors" class="lg:col-span-12" label="Position" name="description" placeholder="Position" />
+                    <div class="flex items-center lg:col-span-6" data-tw-merge>
+                        <input id="active-switch" v-model="item.active" class="form-checkbox-input" type="checkbox" />
+                        <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
+                            <span :class="[item.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.active ? 'Active' : 'Inactive'"></span>
+                        </label>
                     </div>
-                    <div class="lg:col-span-8 grid lg:grid-cols-12 gap-5 items-center">
-                        <FormInputField v-model="item.name" :errors="v$.name.$errors" class="lg:col-span-12" label="Name" name="name" placeholder="Name" />
-                        <FormInputField v-model="item.subTitle" :errors="v$.subTitle.$errors" class="lg:col-span-12" label="Sub Title" name="sub-title" placeholder="Sub Title" />
-                        <FormInputField v-model="item.slug" :disabled="editMode" :errors="v$.slug.$errors" :readonly="editMode" class="lg:col-span-12" label="Slug" name="slug" placeholder="Slug" />
-                        <FormInputField v-model="item.shortDescription" :errors="v$.shortDescription.$errors" class="lg:col-span-12" label="Short Description" name="name" placeholder="Short Description" type="textarea" />
-                        <FormInputField v-model="item.description" :errors="v$.description.$errors" class="lg:col-span-12" label="Description" name="short-description" placeholder="Description" type="textarea" />
-                        <FormInputField v-model="item.position" :errors="v$.position.$errors" class="lg:col-span-12" label="Position" name="description" placeholder="Position" />
-                        <div class="flex items-center lg:col-span-6" data-tw-merge>
-                            <input id="active-switch" v-model="item.active" class="form-checkbox-input" type="checkbox" />
-                            <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
-                                <span :class="[item.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.active ? 'Active' : 'Inactive'"></span>
-                            </label>
-                        </div>
-                        <div class="flex items-center lg:col-span-6" data-tw-merge>
-                            <input id="active-switch" v-model="item.showHome" class="form-checkbox-input" type="checkbox" />
-                            <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
-                                <span :class="[item.showHome ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.showHome ? 'Visible at Home' : 'Hidden from Home'"></span>
-                            </label>
-                        </div>
-                        <div v-if="item.list.length > 0" class="lg:col-span-12 border-t pt-5">
-                            <div class="form-label">List Items</div>
-                            <ul class="space-y-5">
-                                <template v-for="(listItem, i) in item.list" :key="i">
-                                    <li class="grid grid-cols-12 gap-5 p-5 border rounded-lg items-center">
-                                        <FormInputField v-model="listItem.title" class="lg:col-span-8" label="Title" name="title" placeholder="Title" />
-                                        <div class="lg:col-span-4 flex flex-col gap-3" data-tw-merge>
+                    <div class="flex items-center lg:col-span-6" data-tw-merge>
+                        <input id="active-switch" v-model="item.showHome" class="form-checkbox-input" type="checkbox" />
+                        <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
+                            <span :class="[item.showHome ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.showHome ? 'Visible at Home' : 'Hidden from Home'"></span>
+                        </label>
+                    </div>
+                    <div v-if="item.list.length > 0" class="lg:col-span-12 border-t pt-5">
+                        <div class="form-label">List Items</div>
+                        <ul class="space-y-5">
+                            <template v-for="(listItem, i) in item.list" :key="i">
+                                <li class="grid grid-cols-12 gap-5 p-5 border rounded-lg items-start">
+                                    <div class="lg:col-span-4">
+                                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Image" name="image" />
+                                    </div>
+                                    <div class="lg:col-span-8 grid grid-cols-12 gap-5 items-center">
+                                        <FormInputField v-model="listItem.title" class="lg:col-span-12" label="Title" name="title" placeholder="Title" />
+                                        <FormInputField v-model="listItem.description" class="lg:col-span-12" label="Description" name="description" placeholder="Description" type="textarea" />
+                                        <div class="lg:col-span-12 flex items-center justify-between gap-3" data-tw-merge>
                                             <label class="cursor-pointer text-sm font-medium capitalize" for="active-switch">
                                                 <span :class="[listItem.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="listItem.active ? 'Active' : 'Inactive'"></span>
                                             </label>
                                             <input id="active-switch" v-model="listItem.active" class="form-checkbox-input" type="checkbox" />
                                         </div>
-                                        <FormInputField v-model="listItem.description" class="lg:col-span-12" label="Description" name="description" placeholder="Description" type="textarea" />
-                                    </li>
-                                </template>
-                            </ul>
-                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
             </template>
