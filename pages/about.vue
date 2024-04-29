@@ -15,7 +15,7 @@ const { data: page, pending } = await useApiFetch(`/api/show-page/about`, {
                 <p v-if="page.description" class="text-xl font-light text-white mt-4">{{ page.description }}</p>
             </div>
         </div>
-        <ul class="container mt-8 divide-y">
+        <ul class="container px-6 sm:px-12 mt-8 divide-y">
             <template v-for="(section, i) in page.sections" :key="i">
                 <li class="flex justify-between sm:gap-12 gap-8 items-start py-8">
                     <div :class="[section.image && 'lg:w-7/12', 'w-full  space-y-3']">
