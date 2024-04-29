@@ -297,7 +297,7 @@ async function handleModalSubmit() {
                 <div class="grid lg:grid-cols-12 gap-5 items-start">
                     <FormInputField v-model="item.name" :errors="v$.name.$errors" class="lg:col-span-12" label="Name" name="name" placeholder="Name" />
                     <FormInputField v-model="item.subTitle" :errors="v$.subTitle.$errors" class="lg:col-span-12" label="Sub Title" name="sub-title" placeholder="Sub Title" />
-                    <FormUploader v-model="item.image" :allowed-types="['image']" class="lg:col-span-12" label="Image" name="image" />
+                    <FormUploader v-model="item.image" :allowed-types="['image', 'svg']" class="lg:col-span-12" label="Image" name="image" />
                     <FormInputField v-model="item.slug" :disabled="editMode" :errors="v$.slug.$errors" :readonly="editMode" class="lg:col-span-12" label="Slug" name="slug" placeholder="Slug" />
                     <FormInputField v-model="item.shortDescription" :errors="v$.shortDescription.$errors" class="lg:col-span-12" label="Short Description" name="name" placeholder="Short Description" type="textarea" />
                     <FormInputField v-model="item.description" :errors="v$.description.$errors" class="lg:col-span-12" label="Description" name="short-description" placeholder="Description" type="textarea" />
@@ -320,7 +320,7 @@ async function handleModalSubmit() {
                             <template v-for="(listItem, i) in item.list" :key="i">
                                 <li class="grid grid-cols-12 gap-5 p-5 border rounded-lg items-start">
                                     <div class="lg:col-span-4">
-                                        <FormUploader v-model="item.image" :allowed-types="['image']" label="Image" name="image" />
+                                        <FormUploader v-model="item.image" :allowed-types="['image', 'svg']" label="Image" name="image" />
                                     </div>
                                     <div class="lg:col-span-8 grid grid-cols-12 gap-5 items-center">
                                         <FormInputField v-model="listItem.title" class="lg:col-span-12" label="Title" name="title" placeholder="Title" />

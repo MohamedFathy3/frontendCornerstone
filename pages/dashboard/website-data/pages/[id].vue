@@ -256,7 +256,7 @@ async function updateSection() {
                     <FormInputField v-model="page.description" class="lg:col-span-12" label="Description" name="description" placeholder="Description" type="textarea" />
                 </div>
                 <div class="lg:col-span-4 space-y-5">
-                    <FormUploader v-model="page.image" :allowed-types="['image']" class="lg:col-span-12" label="SEO Image Cover" name="image" />
+                    <FormUploader v-model="page.image" :allowed-types="['image', 'svg']" class="lg:col-span-12" label="SEO Image Cover" name="image" />
                     <FormInputField v-model="page.slug" description="Must be unique and without any spaces for example: my-page-name" disabled label="Slug" name="slug" placeholder="Slug" readonly required />
                     <div class="flex items-center gap-5 justify-between" data-tw-merge>
                         <label class="cursor-pointer text-sm font-medium capitalize" for="active-switch">
@@ -312,7 +312,7 @@ async function updateSection() {
                         <div class="grid lg:grid-cols-12 gap-5 items-center">
                             <FormInputField v-model="sectionValue.name" :errors="s$.name.$errors" class="lg:col-span-6" description="This will be used for Admin dashboard index display" label="Name" name="name" placeholder="Name" />
                             <FormInputField v-model="sectionValue.slug" :errors="s$.slug.$errors" class="lg:col-span-6" description="Must be unique and without any spaces for example: my-page-name" label="Slug" name="slug" placeholder="Slug" />
-                            <FormUploader v-model="sectionValue.image" :allowed-types="['image']" class="lg:col-span-12" label="Image" name="section-image" />
+                            <FormUploader v-model="sectionValue.image" :allowed-types="['image', 'svg']" class="lg:col-span-12" label="Image" name="section-image" />
 
                             <FormInputField v-model="sectionValue.postTitle" class="lg:col-span-12" label="Post Title" name="post-title" placeholder="Post Title" />
                             <FormInputField v-model="sectionValue.title" class="lg:col-span-12" label="Title" name="title" placeholder="Title" />
@@ -407,7 +407,7 @@ async function updateSection() {
                                         <FormInputField v-model="sectionItem.name" class="col-span-12 sm:col-span-6" label="Name" name="item-name" placeholder="Name" />
                                         <FormInputField v-model="sectionItem.shortDescription" class="col-span-12 sm:col-span-6" label="Short Description" name="item-short-description" placeholder="Short Description" />
                                         <FormInputField v-model="sectionItem.icon" class="col-span-12 sm:col-span-6" label="Icon" name="item-icon" placeholder="Icon" />
-                                        <FormUploader v-model="sectionItem.image" :allowed-types="['image']" class="lg:col-span-12" label="Image" name="item-image" />
+                                        <FormUploader v-model="sectionItem.image" :allowed-types="['image', 'svg']" class="lg:col-span-12" label="Image" name="item-image" />
                                         <FormInputField v-model="sectionItem.url" class="col-span-12 sm:col-span-6" label="URL" name="item-url" placeholder="url" />
                                         <FormInputField v-model="sectionItem.description" class="col-span-12 sm:col-span-6" label="Description" name="item-description" placeholder="Description" />
                                         <FormInputField v-model="sectionItem.position" class="col-span-12 sm:col-span-6" label="Position" name="item-position" placeholder="Position" />

@@ -258,7 +258,7 @@ async function handleModalSubmit() {
                 <div>
                     <div class="p-4 border rounded-xl mt-2 bg-slate-50">
                         <div class="grid lg:grid-cols-12 gap-5 items-center">
-                            <FormUploader v-model="item.image" :allowed-types="['image']" class="lg:col-span-12" label="SEO Image Cover" name="image" />
+                            <FormUploader v-model="item.image" :allowed-types="['image', 'svg']" class="lg:col-span-12" label="SEO Image Cover" name="image" />
                             <FormInputField v-model="item.title" :errors="v$.title.$errors" class="lg:col-span-12" description="This will be used for Page Title tag in SEO" label="Title" name="title" placeholder="Title" />
                             <FormInputField v-model="item.name" :errors="v$.name.$errors" class="lg:col-span-6" description="This will be used for Admin dashboard index display" label="Name" name="name" placeholder="Name" />
                             <FormInputField v-model="item.slug" :errors="v$.slug.$errors" class="lg:col-span-6" description="Must be unique and without any spaces for example: my-page-name" label="Slug" name="slug" placeholder="Slug" />
