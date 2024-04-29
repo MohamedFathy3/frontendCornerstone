@@ -12,8 +12,8 @@ const { data: services, pending } = await useApiFetch<BackendResponse>(`/api/ser
     <div v-if="!pending" class="relative pt-8 pb-12 bg-slate-100">
         <div class="container px-8">
             <div v-if="content?.postTitle || content?.title" class="text-center">
-                <div v-if="content?.postTitle" class="section-post-title">{{ content.postTitle }}</div>
-                <div v-if="content?.title" class="section-title">{{ content.title }}</div>
+                <div v-if="content?.postTitle" class="section-post-title">{{ content?.postTitle }}</div>
+                <div v-if="content?.title" class="section-title">{{ content?.title }}</div>
                 <div class="mt-1.5 mx-auto h-1 w-52 bg-warning" />
             </div>
             <ul v-if="((services as BackendResponse).data as Service[]).length" class="grid xl:grid-cols-3 md:grid-cols-2 gap-5 mt-8">
