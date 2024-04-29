@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 defineProps({
     content: {
         type: Object as () => Section,
@@ -18,7 +18,7 @@ defineProps({
             </div>
             <ul class="grid xl:grid-cols-4 md:grid-cols-2 gap-5">
                 <li v-for="item in content.items" :key="item.id">
-                    <NuxtImg v-if="item.imageUrl" :src="item.imageUrl" :alt="item.description" :title="item.description" class="w-ful object-contain h-20 mx-auto" />
+                    <NuxtImg v-if="item.imageUrl" :alt="item.description" :src="item.imageUrl" :title="item.description" class="w-ful object-contain h-20 mx-auto" />
                     <div class="text-center">
                         <div class="text-3xl text-warning font-bold mt-3">
                             <span>{{ item.name }}</span>

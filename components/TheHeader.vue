@@ -6,7 +6,7 @@ const headerMenu = ref([
     { name: 'Home', link: '/', icon: 'ph:house-line-light' },
     { name: 'About', link: '/about', icon: 'ph:info-light' },
     { name: 'Services', link: '/services', icon: 'ph:grid-four-light' },
-    { name: 'Gallery', link: '/gallery', icon: 'ph:panorama-light' },
+    // { name: 'Gallery', link: '/gallery', icon: 'ph:panorama-light' },
 ]);
 
 const contactButton = useSettingValue('header_button');
@@ -39,19 +39,25 @@ const resetContactForm = async () => {
 
 const rules = reactive({
     name: { required: helpers.withMessage('Name is required', required) },
-    email: { required: helpers.withMessage('Email is required', required), email: helpers.withMessage('Invalid email format', email) },
+    email: {
+        required: helpers.withMessage('Email is required', required),
+        email: helpers.withMessage('Invalid email format', email),
+    },
     subject: { required: helpers.withMessage('Subject is required', required) },
     content: { required: helpers.withMessage('Message is required', required) },
     countryId: { required: helpers.withMessage('Country is required', required) },
 });
 const v$ = useVuelidate(rules, contactForm);
+
 async function closeContactModal() {
     contactModal.value = false;
     await resetContactForm();
 }
+
 function openContactModal() {
     contactModal.value = true;
 }
+
 async function sendMessage() {
     formIsLoading.value = true;
     const result = await v$.value.$validate();
@@ -61,7 +67,12 @@ async function sendMessage() {
     }
     const { data, error } = await useApiFetch(`/api/contact-us`, { method: 'POST', lazy: true, body: contactForm });
     if (data.value) {
-        useToast({ title: 'Sent Successfully', message: 'CSM will get in touch with you soon', type: 'success', duration: 5000 });
+        useToast({
+            title: 'Sent Successfully',
+            message: 'CSM will get in touch with you soon',
+            type: 'success',
+            duration: 5000,
+        });
         await closeContactModal();
     }
 
@@ -78,13 +89,13 @@ async function sendMessage() {
             <div class="flex items-center justify-between gap-8 duration-300 w-full">
                 <div class="intro-x shrink-0">
                     <NuxtLink :to="'/'">
-                        <NuxtImg v-if="brand.logo" quality="80" preload loading="lazy" width="100%" height="100%" class="h-14 w-full" :src="brand.logo" :alt="brand.name" :title="brand.name" />
+                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" class="h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
                     </NuxtLink>
                 </div>
                 <ul class="flex items-center gap-4 text-[14px] xl:text-[16px]">
                     <template v-for="(item, index) in headerMenu" :key="index">
                         <li class="group relative">
-                            <NuxtLink class="relative overflow-hidden flex items-center px-4 py-8" :to="item.link">
+                            <NuxtLink :to="item.link" class="relative overflow-hidden flex items-center px-4 py-8">
                                 <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
                                 <span class="z-20 font-semibold">{{ item.name }}</span>
                                 <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
@@ -98,7 +109,7 @@ async function sendMessage() {
                 </button>
             </div>
         </div>
-        <TheModal static size="3xl" :open-modal="contactModal" @close-modal="closeContactModal">
+        <TheModal :open-modal="contactModal" size="3xl" static @close-modal="closeContactModal">
             <template #content>
                 <div>
                     <div class="section-title">{{ useSettingValue('contact_form_title') ?? 'Inquiries' }}</div>
@@ -106,22 +117,24 @@ async function sendMessage() {
                     <div class="mt-3 h-1 w-52 bg-warning" />
                 </div>
                 <form class="mt-5 grid gap-3" @submit.prevent="sendMessage">
-                    <FormInputField v-model="contactForm.name" :disabled="formIsLoading" :errors="v$.name.$errors" placeholder="Name" name="name" />
-                    <FormInputField v-model="contactForm.email" :disabled="formIsLoading" :errors="v$.email.$errors" placeholder="Email" type="email" name="email" />
-                    <FormInputField v-model="contactForm.subject" :disabled="formIsLoading" :errors="v$.subject.$errors" placeholder="Subject" name="subject" />
+                    <FormInputField v-model="contactForm.name" :disabled="formIsLoading" :errors="v$.name.$errors" name="name" placeholder="Name" />
+                    <FormInputField v-model="contactForm.email" :disabled="formIsLoading" :errors="v$.email.$errors" name="email" placeholder="Email" type="email" />
+                    <FormInputField v-model="contactForm.subject" :disabled="formIsLoading" :errors="v$.subject.$errors" name="subject" placeholder="Subject" />
                     <FormSelectField
                         v-model="contactForm.countryId"
-                        :select-data="countryList"
-                        labelvalue="name"
                         :disabled="formIsLoading"
-                        keyvalue="id"
-                        imgvalue="imageUrl"
-                        name="country-name"
                         :errors="v$.countryId.$errors"
+                        :select-data="countryList"
+                        imgvalue="imageUrl"
+                        keyvalue="id"
+                        labelvalue="name"
+                        name="country-name"
                         placeholder="Select your country"
                     />
-                    <FormInputField v-model="contactForm.content" :disabled="formIsLoading" :errors="v$.content.$errors" placeholder="Message" name="content" type="textarea" />
-                    <button :disabled="formIsLoading" class="w-full btn btn-primary px-6">{{ formIsLoading ? 'Sending Message...' : 'Send' }}</button>
+                    <FormInputField v-model="contactForm.content" :disabled="formIsLoading" :errors="v$.content.$errors" name="content" placeholder="Message" type="textarea" />
+                    <button :disabled="formIsLoading" class="w-full btn btn-primary px-6">
+                        {{ formIsLoading ? 'Sending Message...' : 'Send' }}
+                    </button>
                 </form>
             </template>
         </TheModal>

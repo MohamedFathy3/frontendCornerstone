@@ -1,21 +1,40 @@
 type BackendResponse = {
     status: string;
     message: string;
-    data: Service[] | User | string;
+    data: Service[] | Section[] | User | string;
 };
 type Service = {
     id: number;
-    name: string;
+    name: string | null;
     subTitle: string | null;
-    slug: string;
+    slug: string | null;
     shortDescription: string | null;
     description: string | null;
     position: number | null;
     active: boolean;
     showHome: boolean;
-    list: any[];
+    list: ServiceItem[];
     imageUrl: string;
-    image: string | null;
+    image: Media | null;
+};
+
+type Media = {
+    id: string;
+    name: number;
+    mimeType: string;
+    size: number;
+    authorId: string;
+    previewUrl: string;
+    fullUrl: string;
+};
+
+type ServiceItem = {
+    url: string | null;
+    icon: string | null;
+    title: string;
+    active: boolean;
+    target: string | null;
+    description: string;
 };
 
 type Item = {
@@ -28,7 +47,7 @@ type Item = {
     position: number;
     sectionId: number;
     imageUrl: string;
-    image: string | null;
+    image: Media | null;
 };
 type Button = {
     label: string | null;
@@ -67,7 +86,7 @@ type User = {
     name: string;
     email: string;
     imageUrl: string;
-    image: string | null;
+    image: Media | null;
 };
 
 type SettingsData = {
@@ -80,9 +99,9 @@ type CountryData = {
     name: string;
     active: boolean;
     code: string;
-    image_url: string;
+    imagUrl: string;
     key: string;
-    order_id: number;
+    position: number;
 };
 
 type Section = {
@@ -102,9 +121,9 @@ type Section = {
     divider: Divider;
     useDefault: boolean;
     active: boolean;
-    items: Item[]; // Replace any with the appropriate type for the items array
+    items: Item[] | Service[]; // Replace any with the appropriate type for the items array
     position: number;
     pageId: number;
     imageUrl: string;
-    image: string | null;
+    image: Media | null;
 };

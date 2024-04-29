@@ -44,6 +44,7 @@ const resetSearch = async () => {
     serverParams.value.page = 1;
     await refresh();
 };
+
 async function deleteItem(id) {
     const confirmed = confirm('Are you sure you want to delete this item?');
     if (confirmed) {
@@ -63,24 +64,37 @@ async function deleteItem(id) {
 
 const item = ref({
     name: null,
-    email: null,
-    password: null,
-    image: null,
+    subTitle: null,
+    slug: null,
+    shortDescription: null,
+    description: null,
+    position: null,
+    active: true,
+    showHome: true,
 });
 const rules = ref({
     name: { required },
-    email: { required, email },
-    password: {},
-    image: {},
+    subTitle: {},
+    slug: { required },
+    shortDescription: {},
+    description: {},
+    position: {},
+    active: {},
+    showHome: {},
 });
 const v$ = useVuelidate(rules, item);
 
 async function resetItemValues() {
     item.value.name = null;
-    item.value.email = null;
-    item.value.password = null;
-    item.value.image = null;
+    item.value.subTitle = null;
+    item.value.slug = null;
+    item.value.shortDescription = null;
+    item.value.description = null;
+    item.value.position = null;
+    item.value.active = false;
+    item.value.showHome = false;
 }
+
 async function closeModal() {
     isOpen.value = false;
     editMode.value = false;
@@ -116,6 +130,7 @@ const fetchItem = async (id) => {
         useToast({ title: 'Error', message: data.value.message, type: 'error', duration: 5000 });
     }
 };
+
 async function openModal(id = null) {
     formLoading.value = true;
     if (id !== null) {
@@ -187,7 +202,7 @@ async function handleModalSubmit() {
                                 <td class="whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-20 h-10">
-                                            <NuxtImg v-if="row.imageUrl" class="w-20 h-10 object-cover bg-white !rounded-md" :src="row.imageUrl" :alt="row.name" :title="row.name" />
+                                            <NuxtImg v-if="row.imageUrl" :alt="row.name" :src="row.imageUrl" :title="row.name" class="w-20 h-10 object-cover bg-white !rounded-md" />
                                         </div>
                                         <div>
                                             <div class="font-medium">{{ row.name }}</div>
@@ -197,24 +212,24 @@ async function handleModalSubmit() {
                                 </td>
                                 <td>
                                     <div>
-                                        <Icon v-if="row.showHome" name="solar:check-circle-linear" class="size-7 text-success" />
-                                        <Icon v-else name="solar:close-circle-linear" class="size-7 text-danger" />
+                                        <Icon v-if="row.showHome" class="size-7 text-success" name="solar:check-circle-linear" />
+                                        <Icon v-else class="size-7 text-danger" name="solar:close-circle-linear" />
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <Icon v-if="row.active" name="solar:check-circle-linear" class="size-7 text-success" />
-                                        <Icon v-else name="solar:close-circle-linear" class="size-7 text-danger" />
+                                        <Icon v-if="row.active" class="size-7 text-success" name="solar:check-circle-linear" />
+                                        <Icon v-else class="size-7 text-danger" name="solar:close-circle-linear" />
                                     </div>
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <button class="px-2 py-1.5 flex items-center text-primary gap-2" @click="openModal(row.id)">
-                                            <Icon name="solar:pen-new-square-linear" class="w-4 h-4 shrink-0" />
+                                            <Icon class="w-4 h-4 shrink-0" name="solar:pen-new-square-linear" />
                                             <span class="font-medium">Edit</span>
                                         </button>
                                         <button class="px-2 py-1.5 flex items-center text-danger gap-2" @click="deleteItem(row.id)">
-                                            <Icon name="solar:trash-bin-minimalistic-linear" class="w-4 h-4 shrink-0" />
+                                            <Icon class="w-4 h-4 shrink-0" name="solar:trash-bin-minimalistic-linear" />
                                             <span class="font-medium">Delete</span>
                                         </button>
                                     </div>
@@ -225,7 +240,7 @@ async function handleModalSubmit() {
                             <tr>
                                 <td colspan="4">
                                     <div class="text-center italic py-12">
-                                        <Icon name="solar:archive-broken" class="size-14 opacity-75" />
+                                        <Icon class="size-14 opacity-75" name="solar:archive-broken" />
                                         <div class="mt-4 text-lg font-medium">No Items!</div>
                                         <div>You can add more items if you want</div>
                                     </div>
@@ -254,26 +269,28 @@ async function handleModalSubmit() {
         </div>
         <div v-if="!pending && rows.data" class="flex items-center justify-between gap-5">
             <button :disabled="rows.current_page === 1" class="btn-secondary btn" @click="changePage(serverParams.page - 1)">
-                <Icon name="solar:double-alt-arrow-left-line-duotone" class="mr-2 w-5 h-5" />
+                <Icon class="mr-2 w-5 h-5" name="solar:double-alt-arrow-left-line-duotone" />
                 Previous
             </button>
             <ul class="flex items-center gap-3">
                 <template v-for="(link, pageIndex) in rows.links" :key="pageIndex">
                     <li v-if="pageIndex !== 0 && pageIndex !== rows.links.length - 1">
-                        <button :disabled="rows.current_page === parseInt(link.label)" :class="[link.active ? 'btn-primary' : 'btn-secondary', 'btn']" @click="changePage(link.label)">{{ link.label }}</button>
+                        <button :class="[link.active ? 'btn-primary' : 'btn-secondary', 'btn']" :disabled="rows.current_page === parseInt(link.label)" @click="changePage(link.label)">
+                            {{ link.label }}
+                        </button>
                     </li>
                 </template>
             </ul>
             <button :disabled="rows.current_page === rows.last_page" class="btn-secondary btn" @click="changePage(serverParams.page + 1)">
                 Next
-                <Icon name="solar:double-alt-arrow-right-line-duotone" class="ml-2 w-5 h-5" />
+                <Icon class="ml-2 w-5 h-5" name="solar:double-alt-arrow-right-line-duotone" />
             </button>
         </div>
-        <TheModal size="4xl" :open-modal="isOpen" @close-modal="closeModal()">
+        <TheModal :open-modal="isOpen" size="4xl" @close-modal="closeModal()">
             <template #header>
                 <div class="flex justify-between items-center">
                     <div class="font-medium" v-html="editMode ? 'Update Item' : 'Add New Item'"></div>
-                    <Icon name="solar:close-square-outline" class="w-8 h-8 opacity-50 cursor-pointer hover:opacity-100 ease-in-out duration-300" @click="closeModal" />
+                    <Icon class="w-8 h-8 opacity-50 cursor-pointer hover:opacity-100 ease-in-out duration-300" name="solar:close-square-outline" @click="closeModal" />
                 </div>
             </template>
             <template #content>
@@ -282,19 +299,51 @@ async function handleModalSubmit() {
                         <FormUploader v-model="item.image" :allowed-types="['image']" label="Image" name="image" />
                     </div>
                     <div class="lg:col-span-8 grid lg:grid-cols-12 gap-5 items-center">
-                        <FormInputField v-model="item.name" name="name" :errors="v$.name.$errors" placeholder="Name" label="Name" class="lg:col-span-12" />
-                        <FormInputField v-model="item.email" name="email" :errors="v$.email.$errors" placeholder="Email" label="Email" class="lg:col-span-12" />
-                        <FormInputField v-model="item.password" name="password" :errors="v$.password.$errors" placeholder="Password" label="Password" class="lg:col-span-12" />
+                        <FormInputField v-model="item.name" :errors="v$.name.$errors" class="lg:col-span-12" label="Name" name="name" placeholder="Name" />
+                        <FormInputField v-model="item.subTitle" :errors="v$.subTitle.$errors" class="lg:col-span-12" label="Sub Title" name="sub-title" placeholder="Sub Title" />
+                        <FormInputField v-model="item.slug" :disabled="editMode" :errors="v$.slug.$errors" :readonly="editMode" class="lg:col-span-12" label="Slug" name="slug" placeholder="Slug" />
+                        <FormInputField v-model="item.shortDescription" :errors="v$.shortDescription.$errors" class="lg:col-span-12" label="Short Description" name="name" placeholder="Short Description" type="textarea" />
+                        <FormInputField v-model="item.description" :errors="v$.description.$errors" class="lg:col-span-12" label="Description" name="short-description" placeholder="Description" type="textarea" />
+                        <FormInputField v-model="item.position" :errors="v$.position.$errors" class="lg:col-span-12" label="Position" name="description" placeholder="Position" />
+                        <div class="flex items-center lg:col-span-6" data-tw-merge>
+                            <input id="active-switch" v-model="item.active" class="form-checkbox-input" type="checkbox" />
+                            <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
+                                <span :class="[item.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.active ? 'Active' : 'Inactive'"></span>
+                            </label>
+                        </div>
+                        <div class="flex items-center lg:col-span-6" data-tw-merge>
+                            <input id="active-switch" v-model="item.showHome" class="form-checkbox-input" type="checkbox" />
+                            <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
+                                <span :class="[item.showHome ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.showHome ? 'Visible at Home' : 'Hidden from Home'"></span>
+                            </label>
+                        </div>
+                        <div v-if="item.list.length > 0" class="lg:col-span-12 border-t pt-5">
+                            <div class="form-label">List Items</div>
+                            <ul class="space-y-5">
+                                <template v-for="(listItem, i) in item.list" :key="i">
+                                    <li class="grid grid-cols-12 gap-5 p-5 border rounded-lg items-center">
+                                        <FormInputField v-model="listItem.title" class="lg:col-span-8" label="Title" name="title" placeholder="Title" />
+                                        <div class="lg:col-span-4 flex flex-col gap-3" data-tw-merge>
+                                            <label class="cursor-pointer text-sm font-medium capitalize" for="active-switch">
+                                                <span :class="[listItem.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="listItem.active ? 'Active' : 'Inactive'"></span>
+                                            </label>
+                                            <input id="active-switch" v-model="listItem.active" class="form-checkbox-input" type="checkbox" />
+                                        </div>
+                                        <FormInputField v-model="listItem.description" class="lg:col-span-12" label="Description" name="description" placeholder="Description" type="textarea" />
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </template>
             <template #footer>
                 <div class="w-full flex items-center justify-end gap-5">
-                    <button :disabled="formLoading" type="button" class="btn btn-danger px-4" @click="closeModal">
+                    <button :disabled="formLoading" class="btn btn-danger px-4" type="button" @click="closeModal">
                         <Icon :name="formLoading ? 'svg-spinners:3-dots-fade' : 'solar:close-circle-linear'" class="w-5 h-5 mr-2" />
                         <span>Close</span>
                     </button>
-                    <button :disabled="formLoading" type="button" class="btn btn-primary px-4" @click="handleModalSubmit()">
+                    <button :disabled="formLoading" class="btn btn-primary px-4" type="button" @click="handleModalSubmit()">
                         <Icon :name="formLoading ? 'svg-spinners:3-dots-fade' : 'solar:check-circle-broken'" class="w-5 h-5 mr-2" />
                         <span v-html="editMode ? 'Update' : 'Save'" />
                     </button>
