@@ -20,7 +20,7 @@ const { data: services, pending } = await useApiFetch<BackendResponse>(`/api/ser
                 <li v-for="service in (services as BackendResponse).data" :key="service.id">
                     <div class="flex flex-col bg-white rounded-xl overflow-hidden border h-full group hover:scale-105 ease-in-out duration-300">
                         <div class="h-52 object-cover w-full overflow-hidden">
-                            <NuxtImg :alt="service.name" :src="service.imageUrl" :title="service.name" class="group-hover:scale-105 ease-in-out duration-300" />
+                            <NuxtImg :alt="service.name" :src="service.imageUrl" :title="service.name" class="group-hover:scale-105 object-center object-cover ease-in-out duration-300" />
                         </div>
                         <div class="grow pt-3 px-5">
                             <div class="font-medium text-lg text-center pb-1.5 border-b border-dashed">{{ service.name }}</div>
