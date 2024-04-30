@@ -3,9 +3,29 @@ import { email, helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 const headerMenu = ref([
-    { name: 'Home', link: '/', icon: 'ph:house-line-light' },
-    { name: 'About', link: '/about', icon: 'ph:info-light' },
-    { name: 'Services', link: '/services', icon: 'ph:grid-four-light' },
+    { name: 'Home', link: '/', icon: 'ph:house-line-light', subMenus: [] },
+    { name: 'About', link: '/about', icon: 'ph:info-light', subMenus: [] },
+    {
+        name: 'Services',
+        link: '/services',
+        icon: 'ph:grid-four-light',
+        subMenus: [
+            {
+                name: 'Consolidation Service',
+                link: '/services/consolidation-service',
+                icon: 'ph:shipping-container-light',
+            },
+            { name: 'Ocean Freight', link: '/services/ocean-freight', icon: 'fluent:vehicle-ship-16-regular' },
+            { name: 'Air Freight', link: '/services/air-freight', icon: 'iconoir:airplane' },
+            { name: 'Cargo Insurance', link: '/services/cargo-insurance', icon: 'icon-park-outline:protect' },
+            { name: 'Customs Brokerage', link: '/services/customs-brokerage', icon: 'guidance:customs' },
+            {
+                name: 'Bonded Warehousing',
+                link: '/services/bonded-warehousing',
+                icon: 'material-symbols:warehouse-outline-rounded',
+            },
+        ],
+    },
     // { name: 'Gallery', link: '/gallery', icon: 'ph:panorama-light' },
 ]);
 
@@ -81,6 +101,23 @@ async function sendMessage() {
     }
     formIsLoading.value = false;
 }
+
+const route = useRoute();
+
+const isMenuOpen = ref(false);
+
+function desktopDropDownMenu() {
+    isMenuOpen.value = !isMenuOpen.value;
+}
+
+watch(
+    () => route.path,
+    (newPath, oldPath) => {
+        if (newPath !== oldPath) {
+            isMenuOpen.value = false;
+        }
+    },
+);
 </script>
 
 <template>
@@ -92,15 +129,47 @@ async function sendMessage() {
                         <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" class="h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
                     </NuxtLink>
                 </div>
-                <ul class="flex items-center gap-4 text-[14px] xl:text-[16px]">
-                    <template v-for="(item, index) in headerMenu" :key="index">
-                        <li class="group relative">
+                <ul class="md:flex items-center gap-4 text-[14px] xl:text-[16px] hidden">
+                    <template v-for="item in headerMenu" :key="item.link">
+                        <li v-if="item.subMenus.length === 0" class="group relative">
                             <NuxtLink :to="item.link" class="relative overflow-hidden flex items-center px-4 py-8">
                                 <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
                                 <span class="z-20 font-semibold">{{ item.name }}</span>
                                 <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
                             </NuxtLink>
                         </li>
+
+                        <HeadlessMenu v-else as="li" class="relative inline-block text-left">
+                            <div>
+                                <HeadlessMenuButton @click="desktopDropDownMenu">
+                                    <div class="group relative overflow-hidden flex items-center px-4 py-8">
+                                        <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
+                                        <span class="z-20 font-semibold">{{ item.name }}</span>
+                                        <Icon :class="[isMenuOpen && 'rotate-90', 'z-20 ml-2 h-6 w-6 text-slate-600 ease-in-out duration-300']" name="ion:md-arrow-dropdown" />
+                                        <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
+                                    </div>
+                                </HeadlessMenuButton>
+                            </div>
+
+                            <TransitionExpand>
+                                <div v-show="isMenuOpen">
+                                    <HeadlessMenuItems class="absolute right-0 mt-2 p-1.5 w-64 origin-top-right divide-y rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none" static>
+                                        <div class="p-1.5">
+                                            <template v-for="subItem in item.subMenus" :key="subItem.link">
+                                                <HeadlessMenuItem v-slot="{ active }">
+                                                    <div class="p-1">
+                                                        <NuxtLink :class="[active ? 'bg-primary text-white' : '', 'group flex w-full items-center rounded-md px-2 py-2 gap-3']" :to="subItem.link">
+                                                            <Icon :name="subItem.icon" class="shrink-0 size-5 opacity-75" />
+                                                            <span>{{ subItem.name }}</span>
+                                                        </NuxtLink>
+                                                    </div>
+                                                </HeadlessMenuItem>
+                                            </template>
+                                        </div>
+                                    </HeadlessMenuItems>
+                                </div>
+                            </TransitionExpand>
+                        </HeadlessMenu>
                     </template>
                 </ul>
                 <button :class="['group px-4 btn btn-' + contactButton.style]" @click="openContactModal">
