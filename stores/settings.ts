@@ -12,15 +12,19 @@ export const useSettingsStore = defineStore('settings', () => {
     };
 
     const fetchSetting = async () => {
-        const { data, pending } = await useApiFetch('/api/setting-public', {
+        const { data, error } = await useApiFetch('/api/setting-public', {
             lazy: true,
         });
+        console.log(data.value);
+        console.log(error.value);
         setSettings((data.value as { data: SettingsData[] | undefined }).data || []!);
     };
     const fetchCountries = async () => {
-        const { data, pending } = await useApiFetch('/api/country-public-list', {
+        const { data, error } = await useApiFetch('/api/country-public-list', {
             lazy: true,
         });
+        console.log(data.value);
+        console.log(error.value);
         setCountries((data.value as { data: CountryData[] | undefined }).data || []!);
     };
 
