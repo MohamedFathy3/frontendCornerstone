@@ -83,43 +83,44 @@ const value = ref(props.modelValue);
 onMounted(() => {
     value.value = props.modelValue;
 });
-
 watchEffect(() => {
     emit('update:model-value', value.value);
 });
 </script>
 
 <template>
-    <div class="text-base" :class="[flexTitle ? 'form-inline' : '']">
-        <label v-if="label" :for="name" class="form-label" :class="[flexTitle ? '!text-left sm:w-20' : '']">
+    <div :class="[flexTitle ? 'form-inline' : '']" class="text-base">
+        <label v-if="label" :class="[flexTitle ? '!text-left sm:w-20' : '']" :for="name" class="form-label">
             <span>{{ label }}</span>
             <span v-if="label && required" class="ml-1 text-sm text-danger">*</span>
         </label>
         <template v-if="type !== 'textarea'">
-            <div class="grow" :class="[icon ? 'relative' : '']">
+            <div :class="[icon ? 'relative' : '']" class="grow">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <Icon :name="icon" class="h-5 w-5 text-slate-400 dark:text-slate-600" />
                 </div>
                 <input
                     :id="id === null ? name : id"
                     v-model="value"
-                    :autocomplete="autocomplete"
-                    :type="type"
-                    :autofocus="autofocus"
-                    :readonly="readonly"
-                    :maxlength="maxlength"
-                    :required="required"
                     :aria-label="label ?? name"
-                    class="form-control placeholder:!text-slate-400"
+                    :autocomplete="autocomplete"
+                    :autofocus="autofocus"
                     :class="[size === 'lg' ? 'form-control-lg' : '', size === 'sm' ? 'form-control-sm' : '', icon ? 'pl-10' : '', errors?.length > 0 ? '!border-danger' : '', rounded ? 'form-control-rounded' : '']"
-                    :placeholder="placeholder"
                     :disabled="disabled"
+                    :maxlength="maxlength"
+                    :placeholder="placeholder"
+                    :readonly="readonly"
+                    :required="required"
+                    :type="type"
+                    class="form-control placeholder:!text-slate-400"
                 />
             </div>
             <div v-if="description" class="form-help" v-html="description" />
             <template v-if="errors.length > 0">
                 <ul class="mt-1">
-                    <li v-for="(error, errorIndex) in errors" :key="errorIndex" class="text-sm text-danger">{{ error.$message }}</li>
+                    <li v-for="(error, errorIndex) in errors" :key="errorIndex" class="text-sm text-danger">
+                        {{ error.$message }}
+                    </li>
                 </ul>
             </template>
         </template>
@@ -128,23 +129,25 @@ watchEffect(() => {
                 <textarea
                     :id="id === null ? name : id"
                     v-model="value"
+                    :aria-label="label ?? name"
                     :autocomplete="autocomplete"
-                    :rows="rows"
-                    :maxlength="maxlength"
                     :autofocus="autofocus"
+                    :class="[size === 'lg' ? 'form-control-lg' : '', size === 'sm' ? 'form-control-sm' : '', errors?.length > 0 ? '!border-danger' : '', rounded ? 'form-control-rounded' : '']"
+                    :disabled="disabled"
+                    :maxlength="maxlength"
+                    :placeholder="placeholder"
                     :readonly="readonly"
                     :required="required"
-                    :aria-label="label ?? name"
+                    :rows="rows"
                     class="form-control"
-                    :class="[size === 'lg' ? 'form-control-lg' : '', size === 'sm' ? 'form-control-sm' : '', errors?.length > 0 ? '!border-danger' : '', rounded ? 'form-control-rounded' : '']"
-                    :placeholder="placeholder"
-                    :disabled="disabled"
                 />
             </div>
             <div v-if="description" class="form-help" v-html="description" />
             <template v-if="errors.length > 0">
                 <ul class="mt-1">
-                    <li v-for="(error, errorIndex) in errors" :key="errorIndex" class="text-sm text-danger">{{ error.$message }}</li>
+                    <li v-for="(error, errorIndex) in errors" :key="errorIndex" class="text-sm text-danger">
+                        {{ error.$message }}
+                    </li>
                 </ul>
             </template>
         </template>
