@@ -5,6 +5,8 @@ import { useVuelidate } from '@vuelidate/core';
 const headerMenu = ref([
     { name: 'Home', link: '/', icon: 'ph:house-line-light', subMenus: [] },
     { name: 'About', link: '/about', icon: 'ph:info-light', subMenus: [] },
+    { name: 'Aplay_Job', link: '/empley', icon: 'ph:info-light', subMenus: [] },
+    { name: 'company_Login', link: '/company', icon: 'ph:info-light', subMenus: [] },
     {
         name: 'Services',
         link: '/services',
