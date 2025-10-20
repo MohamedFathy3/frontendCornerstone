@@ -1,271 +1,327 @@
 <template>
-    <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <!-- Hero Section -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">
-                Company Registration
-            </h1>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Register your company and find the best talents for your team. 
-                Join our network of successful businesses.
-            </p>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <Icon name="mdi:office-building-plus" class="h-12 w-12 text-white" />
         </div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Company Registration</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Register your company and join our network of partners</p>
+      </div>
 
-        <!-- Registration Form -->
-        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div class="md:flex">
-                <!-- Left Side - Form -->
-                <div class="md:w-1/2 p-8">
-                    <form @submit.prevent="submitForm" class="space-y-6">
-                        <!-- Company Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Company Name *
-                            </label>
-                            <input
-                                id="name"
-                                v-model="formData.name"
-                                type="text"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                placeholder="Enter company name"
-                            />
-                        </div>
+      <!-- Success Message -->
+      <div v-if="submitSuccess" class="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-center">
+          <Icon name="clarity:success-standard-line" class="h-7 w-7 text-green-500 mr-4" />
+          <span class="text-green-800 font-semibold text-lg">Company registered successfully!</span>
+        </div>
+      </div>
 
-                        <!-- Responsible Person -->
-                        <div>
-                            <label for="responsible_name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Responsible Person *
-                            </label>
-                            <input
-                                id="responsible_name"
-                                v-model="formData.responsible_name"
-                                type="text"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                placeholder="Enter responsible person name"
-                            />
-                        </div>
+      <!-- Error Message -->
+      <div v-if="submitError" class="mb-8 p-6 bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-center">
+          <Icon name="clarity:error-standard-line" class="h-7 w-7 text-red-500 mr-4" />
+          <span class="text-red-800 font-semibold text-lg">{{ submitError }}</span>
+        </div>
+      </div>
 
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email Address *
-                            </label>
-                            <input
-                                id="email"
-                                v-model="formData.email"
-                                type="email"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                placeholder="company@example.com"
-                            />
-                        </div>
-
-                        <!-- Phone -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                Phone Number *
-                            </label>
-                            <input
-                                id="phone"
-                                v-model="formData.phone"
-                                type="tel"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                placeholder="Enter phone number"
-                            />
-                        </div>
-
-                        <!-- Country & City -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="country_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Country *
-                                </label>
-                                <select
-                                    id="country_id"
-                                    v-model="formData.country_id"
-                                    required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                >
-                                    <option value="">Select Country</option>
-                                    <option value="1">Egypt</option>
-                                    <option value="2">Saudi Arabia</option>
-                                    <option value="3">UAE</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="city" class="block text-sm font-medium text-gray-700 mb-2">
-                                    City *
-                                </label>
-                                <input
-                                    id="city"
-                                    v-model="formData.city"
-                                    type="text"
-                                    required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                    placeholder="Enter city"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Address -->
-                        <div>
-                            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-                                Address *
-                            </label>
-                            <textarea
-                                id="address"
-                                v-model="formData.address"
-                                rows="3"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                placeholder="Enter company address"
-                            ></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button
-                            type="submit"
-                            :disabled="loading"
-                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span v-if="loading">Registering...</span>
-                            <span v-else>Register Company</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Right Side - Logo Upload -->
-                <div class="md:w-1/2 bg-gray-50 p-8 border-l border-gray-200">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                            Company Logo
-                        </h3>
-                        <p class="text-gray-600">
-                            Upload your company logo to build brand recognition
-                        </p>
-                    </div>
-
-                    <!-- File Upload Component -->
-                    <FileUpload
-                        label="Company Logo"
-                        name="image"
-                        :required="true"
-                        :model-value="formData.image"
-                        :allowed-types="['image']"
-                        :max-size="5"
-                        :errors="logoErrors"
-                        @update:model-value="handleLogoUpdate"
-                    />
-                </div>
+      <!-- Registration Form -->
+      <div class="bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-100">
+        <form @submit.prevent="submitCompany" class="p-12 space-y-12">
+          
+          <!-- Company Information -->
+          <div class="space-y-8">
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
+              <div class="w-3 h-10 bg-blue-500 rounded-full"></div>
+              <h2 class="text-3xl font-bold text-gray-900">Company Information</h2>
             </div>
-        </div>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Company Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="company.name"
+                  type="text"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                  placeholder="Enter company name"
+                />
+              </div>
 
-        <!-- Additional Info -->
-        <div class="max-w-4xl mx-auto mt-8 text-center">
-            <p class="text-gray-600">
-                Already have an account? 
-                <a href="#" class="text-blue-600 hover:text-blue-700 font-semibold">Sign in here</a>
-            </p>
-        </div>
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Responsible Person Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="company.responsible_name"
+                  type="text"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                  placeholder="Enter responsible person name"
+                />
+              </div>
+
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Email Address <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="company.email"
+                  type="email"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                  placeholder="company@example.com"
+                />
+              </div>
+
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Phone Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="company.phone"
+                  type="tel"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                  placeholder="Enter phone number"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Information -->
+          <div class="space-y-8">
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
+              <div class="w-3 h-10 bg-green-500 rounded-full"></div>
+              <h2 class="text-3xl font-bold text-gray-900">Location Information</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Country <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="company.country_id"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white"
+                >
+                  <option value="1">Egypt</option>
+                  <option value="2">Saudi Arabia</option>
+                  <option value="3">UAE</option>
+                  <option value="4">Other</option>
+                </select>
+              </div>
+
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  City <span class="text-red-500">*</span>
+                </label>
+                <input
+                  v-model="company.city"
+                  type="text"
+                  required
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                  placeholder="Enter city"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <label class="block text-lg font-semibold text-gray-800">
+                Complete Address <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                v-model="company.address"
+                required
+                rows="3"
+                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
+                placeholder="Enter complete company address"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Company Logo -->
+          <div class="space-y-8">
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
+              <div class="w-3 h-10 bg-purple-500 rounded-full"></div>
+              <h2 class="text-3xl font-bold text-gray-900">Company Logo</h2>
+            </div>
+            
+            <div class="space-y-4">
+              <label class="block text-lg font-semibold text-gray-800">
+                Company Logo
+              </label>
+              <div class="border-3 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group max-w-2xl mx-auto">
+                <input
+                  type="file"
+                  @change="handleFileUpload($event)"
+                  accept="image/*"
+                  class="hidden"
+                  id="logo-upload"
+                />
+                <label for="logo-upload" class="cursor-pointer">
+                  <div class="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-200 transition-colors">
+                    <Icon name="mdi:image" class="h-10 w-10 text-blue-500" />
+                  </div>
+                  <p class="text-xl font-semibold text-gray-700 mb-3">Upload Company Logo</p>
+                  <p class="text-base text-gray-500">JPG, PNG, WEBP (Maximum 5MB)</p>
+                  <p v-if="company.image" class="text-green-600 font-semibold mt-4 text-lg">
+                    ✓ {{ company.image.name }}
+                  </p>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-10 border-t border-gray-200">
+            <button
+              type="submit"
+              :disabled="formLoading"
+              class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-2xl rounded-2xl hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center justify-center"
+            >
+              <Icon v-if="formLoading" name="eos-icons:three-dots-loading" class="h-7 w-7 mr-4" />
+              <span>{{ formLoading ? 'Processing Registration...' : 'Register Company' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
+<script setup lang="ts">
+// Company data structure based on your API fields
+const company = reactive({
+  name: '',
+  responsible_name: '',
+  email: '',
+  phone: '',
+  country_id: '1',
+  city: '',
+  address: '',
+  image: null as File | null,
+});
 
-// Loading state
-const loading = ref(false)
+const formLoading = ref(false);
+const submitSuccess = ref(false);
+const submitError = ref('');
 
-// Form data
-const formData = reactive({
-    name: '',
-    responsible_name: '',
-    email: '',
-    phone: '',
-    country_id: '',
-    city: '',
-    address: '',
-    image: null
-})
-
-// Logo validation errors
-const logoErrors = ref([])
-
-// Handle logo update
-const handleLogoUpdate = (file) => {
-    formData.image = file
-    // Clear errors when file is selected
-    logoErrors.value = []
+// File upload handler
+function handleFileUpload(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    company.image = input.files[0];
+  }
 }
 
-// Submit form
-const submitForm = async () => {
-    // Basic validation
-    if (!formData.image) {
-        logoErrors.value = [{ $message: 'Company logo is required' }]
-        return
-    }
+// Form submission - باستخدام $fetch مباشرة
+async function submitCompany() {
+  formLoading.value = true;
+  submitError.value = '';
 
-    loading.value = true
+  try {
+    // أولاً: جهز CSRF token
+    await useApiFetch('/sanctum/csrf-cookie', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-    try {
-        // Create FormData object
-        const submitData = new FormData()
-        
-        // Append all form fields
-        submitData.append('name', formData.name)
-        submitData.append('responsible_name', formData.responsible_name)
-        submitData.append('email', formData.email)
-        submitData.append('phone', formData.phone)
-        submitData.append('country_id', formData.country_id)
-        submitData.append('city', formData.city)
-        submitData.append('address', formData.address)
-        
-        // Append the image file
-        if (formData.image) {
-            submitData.append('image', formData.image)
-        }
+    // ثانياً: جهز FormData
+    const formData = new FormData();
+    
+    formData.append('name', company.name);
+    formData.append('responsible_name', company.responsible_name);
+    formData.append('email', company.email);
+    formData.append('phone', company.phone);
+    formData.append('country_id', company.country_id);
+    formData.append('city', company.city);
+    formData.append('address', company.address);
+    
+    if (company.image) formData.append('image', company.image);
 
-        console.log('Submitting company data with image...')
+    // ثالثاً: إرسال البيانات باستخدام $fetch مباشرة
+    const data = await useApiFetch('/api/company/store', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include'
+    });
 
-        // Call API without authentication
-        const response = await $fetch('/api/company/store', {
-            method: 'POST',
-            body: submitData,
-            // No authentication headers
-            headers: {
-                'Accept': 'application/json',
-            }
-        })
+    submitSuccess.value = true;
+    
+    // Reset form
+    setTimeout(() => {
+      Object.assign(company, {
+        name: '',
+        responsible_name: '',
+        email: '',
+        phone: '',
+        country_id: '1',
+        city: '',
+        address: '',
+        image: null,
+      });
+      submitSuccess.value = false;
+    }, 4000);
 
-        if (response) {
-            // Success handling
-            console.log('Company registered successfully:', response)
-            
-            // Show success message
-            alert('Company registered successfully!')
-            
-            // Reset form
-            Object.assign(formData, {
-                name: '',
-                responsible_name: '',
-                email: '',
-                phone: '',
-                country_id: '',
-                city: '',
-                address: '',
-                image: null
-            })
-        }
-
-    } catch (error) {
-        console.error('Error registering company:', error)
-        alert('Error registering company. Please try again.')
-    } finally {
-        loading.value = false
-    }
+  } catch (err: any) {
+    console.error('Submission error:', err);
+    submitError.value = err.data?.message || err.message || 'Something went wrong. Please try again.';
+  } finally {
+    formLoading.value = false;
+  }
 }
 </script>
+
+<style scoped>
+/* Enhanced animations */
+input, textarea, select, button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom focus styles with larger shadow */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+/* Enhanced hover effects */
+button:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+/* Custom scrollbar for textareas */
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* File upload area enhancements */
+input[type="file"] + label {
+  transition: all 0.3s ease;
+}
+
+input[type="file"] + label:hover {
+  transform: scale(1.02);
+}
+</style>

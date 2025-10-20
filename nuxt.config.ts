@@ -49,6 +49,14 @@ export default defineNuxtConfig({
             '/get-geoip/**': {
                 proxy: `http://ip-api.com/json/**`,
             },
+            
+           
+            '/api/**': {
+                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/api/**`
+            },
+            '/sanctum/**': {
+                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/sanctum/**`
+            }
         },
         compressPublicAssets: true,
     },

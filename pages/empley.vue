@@ -321,15 +321,21 @@ function handleFileUpload(event: Event, type: 'cv' | 'image') {
   }
 }
 
-// Form submission - بدون authentication
+// Form submission - باستخدام $fetch مباشرة
 async function submitEmployee() {
   formLoading.value = true;
   submitError.value = '';
 
   try {
+    // أولاً: جهز CSRF token
+    await useApiFetch('/sanctum/csrf-cookie', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    // ثانياً: جهز FormData
     const formData = new FormData();
     
-    // Add all text fields
     formData.append('name', employee.name);
     formData.append('email', employee.email);
     formData.append('address', employee.address);
@@ -339,40 +345,22 @@ async function submitEmployee() {
     formData.append('country_id', employee.country_id);
     formData.append('type_job', employee.type_job);
     
-    // Add languages
     employee.languages.forEach((lang, index) => {
       if (lang.trim()) {
         formData.append(`languages[${index}]`, lang);
       }
     });
     
-    // Add files
     if (employee.cv) formData.append('cv', employee.cv);
     if (employee.image) formData.append('image', employee.image);
 
-    // استخدام fetch مباشرة بدون أي authentication
-    const response = await fetch('https://job.professionalacademyedu.com/api/employee/store', {
+    // ثالثاً: إرسال البيانات باستخدام $fetch مباشرة
+    const data = await useApiFetch('/api/employee/store', {
       method: 'POST',
-      body: formData
-      // لا نضيف أي headers خالص
+      body: formData,
+      credentials: 'include'
     });
 
-    if (!response.ok) {
-      // حاول تجيب الرسالة من ال response
-      let errorMessage = `HTTP error! status: ${response.status}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch {
-        // إذا مفيش JSON نستخدم status text
-        errorMessage = response.statusText || errorMessage;
-      }
-      throw new Error(errorMessage);
-    }
-
-    const data = await response.json();
-
-    // Success
     submitSuccess.value = true;
     
     // Reset form
@@ -395,12 +383,13 @@ async function submitEmployee() {
 
   } catch (err: any) {
     console.error('Submission error:', err);
-    submitError.value = err.message || 'Something went wrong. Please try again.';
+    submitError.value = err.data?.message || err.message || 'Something went wrong. Please try again.';
   } finally {
     formLoading.value = false;
   }
 }
 </script>
+
 <style scoped>
 /* Enhanced animations */
 input, textarea, select, button {
