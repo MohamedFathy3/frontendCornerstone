@@ -2,6 +2,7 @@
     "name": "nuxt-app",
     "private": true,
     "scripts": {
+        "prod": "nuxt build && nuxt start",
         "build": "nuxt build",
         "dev": "nuxt dev --host cornerstonemarine.test --port 4567",
         "start": "nuxt start",
