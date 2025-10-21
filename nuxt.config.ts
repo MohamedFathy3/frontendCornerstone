@@ -3,6 +3,7 @@
 export default defineNuxtConfig({
     ssr: true,
     devtools: { enabled: true },
+
     typescript: {
         tsConfig: {
             compilerOptions: {
@@ -10,18 +11,22 @@ export default defineNuxtConfig({
             },
         },
     },
+
     sourcemap: {
         server: true,
         client: true,
     },
+
     pinia: {
         autoImports: ['defineStore'],
     },
+
     experimental: {
         emitRouteChunkError: 'automatic',
         sharedPrerenderData: true,
         typedPages: true,
     },
+
     runtimeConfig: {
         public: {
             appUrl: process.env.APP_URL ?? 'http://cornerstonemarine.test:4567',
@@ -32,15 +37,19 @@ export default defineNuxtConfig({
                 'Freight Company, Efficient Freight Company, Customs Clearance, Sea Shipment, Air Shipment, International Insurance, Cornerstone Marine, Freight Market, Logistics Management, Global Market Access, Import and Export, Product Distribution, Strategic Gateway, Freight Forwarding Services',
         },
     },
+
     build: {
         transpile: ['@vuepic/vue-datepicker'],
     },
+
     site: {
         url: process.env.APP_URL ?? 'https://cornerstonemarine.test:4567',
     },
+
     sitemap: {
         exclude: ['/dashboard/**', '/login'],
     },
+
     nitro: {
         routeRules: {
             '/backend/**': {
@@ -49,22 +58,24 @@ export default defineNuxtConfig({
             '/get-geoip/**': {
                 proxy: `http://ip-api.com/json/**`,
             },
-            
-           
+
             '/api/**': {
-                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/api/**`
+                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/api/**`,
             },
             '/sanctum/**': {
-                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/sanctum/**`
-            }
+                proxy: `${process.env.API_URL || 'https://job.professionalacademyedu.com'}/sanctum/**`,
+            },
         },
         compressPublicAssets: true,
     },
+
     routeRules: {
         '/dashboard/**': { ssr: false },
     },
+
     css: ['@/assets/css/main.scss'],
     modules: ['nuxt-lodash', '@pinia/nuxt', 'nuxt-icon', '@nuxtjs/eslint-module', '@nuxtjs/color-mode', '@nuxt/image', 'nuxt-swiper', 'nuxt-headlessui', '@morev/vue-transitions/nuxt', 'nuxt-simple-sitemap'],
+
     image: {
         inject: true,
         quality: 65,
@@ -78,9 +89,11 @@ export default defineNuxtConfig({
             xxl: 1536,
         },
     },
+
     imports: {
         dirs: ['./stores'],
     },
+
     app: {
         buildAssetsDir: '/csm-app/',
         rootId: '__csmapp',
@@ -109,9 +122,11 @@ export default defineNuxtConfig({
         },
         pageTransition: { name: 'page', mode: 'out-in' },
     },
+
     headlessui: {
         prefix: 'Headless',
     },
+
     postcss: {
         plugins: {
             'postcss-import': {},
@@ -121,6 +136,7 @@ export default defineNuxtConfig({
             autoprefixer: {},
         },
     },
+
     colorMode: {
         preference: 'light', // default value of $colorMode.preference
         fallback: 'light', // fallback value if not system preference found
@@ -131,4 +147,6 @@ export default defineNuxtConfig({
         classSuffix: '',
         storageKey: 'csm-color-mode',
     },
+
+    compatibilityDate: '2025-10-21',
 });

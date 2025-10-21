@@ -28,7 +28,7 @@
       </div>
 
       <!-- Loading States -->
-      <div v-if="countriesLoading || keyCodesLoading" class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-lg">
+      <div v-if="countriesLoading" class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-lg">
         <div class="flex items-center justify-center">
           <Icon name="eos-icons:three-dots-loading" class="h-7 w-7 text-blue-500 mr-4" />
           <span class="text-blue-800 font-semibold text-lg">Loading data...</span>
@@ -112,36 +112,37 @@
                 />
               </div>
 
-            <div class="space-y-4">
-    <label class="block text-lg font-semibold text-gray-800">
-      Key Code (Country) <span class="text-red-500">*</span>
-    </label>
-    <select
-      v-model="employee.key_code_id"
-      required
-      :disabled="countriesLoading"
-      class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-    >
-      <option value="">Select a country for key code</option>
-      <option 
-        v-for="country in countries" 
-        :key="country.id" 
-        :value="country.id"
-        class="flex items-center space-x-3 py-2"
-      >
-        <div class="flex items-center space-x-3">
-          <img 
-            v-if="country.image_url || country.flag || country.imageUrl" 
-            :src="country.image_url || country.flag || country.imageUrl" 
-            :alt="country.name"
-            class="w-6 h-4 rounded object-cover"
-            onerror="this.style.display='none'"
-          />
-          <span>{{ country.name }}</span>
-        </div>
-      </option>
-    </select>
-  </div>
+              <div class="space-y-4">
+                <label class="block text-lg font-semibold text-gray-800">
+                  Key Code (Country) <span class="text-red-500">*</span>
+                </label>
+                <select
+                  v-model="employee.key_code_id"
+                  required
+                  :disabled="countriesLoading"
+                  class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select a country for key code</option>
+                  <option 
+                    v-for="country in countries" 
+                    :key="country.id" 
+                    :value="country.id"
+                    class="flex items-center space-x-3 py-2"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <img 
+                        v-if="country.image_url || country.flag || country.imageUrl" 
+                        :src="country.image_url || country.flag || country.imageUrl" 
+                        :alt="country.name"
+                        class="w-6 h-4 rounded object-cover"
+                        onerror="this.style.display='none'"
+                      />
+                      <span>{{ country.name }}</span>
+                    </div>
+                  </option>
+                </select>
+              </div>
+
               <div class="space-y-4">
                 <label class="block text-lg font-semibold text-gray-800">
                   Nationality <span class="text-red-500">*</span>
@@ -308,12 +309,19 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <div v-for="(language, index) in employee.languages" :key="index" class="flex items-center space-x-4 bg-gray-50 p-6 rounded-2xl border border-gray-200">
-                <input
+                <select
                   v-model="employee.languages[index]"
-                  type="text"
-                  class="flex-1 px-5 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white"
-                  placeholder="Language"
-                />
+                  class="flex-1 px-5 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white appearance-none"
+                >
+                  <option value="">Select a language</option>
+                  <option 
+                    v-for="lang in languagesList" 
+                    :key="lang"
+                    :value="lang"
+                  >
+                    {{ lang }}
+                  </option>
+                </select>
                 <button
                   v-if="employee.languages.length > 1"
                   type="button"
@@ -462,7 +470,7 @@
           <div class="pt-10 border-t border-gray-200">
             <button
               type="submit"
-              :disabled="formLoading || countriesLoading || keyCodesLoading"
+              :disabled="formLoading || countriesLoading"
               class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-2xl rounded-2xl hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center justify-center"
             >
               <Icon v-if="formLoading" name="eos-icons:three-dots-loading" class="h-7 w-7 mr-4" />
@@ -493,14 +501,12 @@ const employee = reactive({
   cv: null as File | null,
   image: null as File | null,
   application: null as File | null,
-  // الحقول الجديدة
   user_name: '',
   phone: '',
   post_nummer: '',
   experience_certificate: '',
   favorite_work: [''],
   password: '01062206359',
-  // الحقول الناقصة
   skills: '',
   key_code_id: ''
 });
@@ -509,7 +515,6 @@ const formLoading = ref(false);
 const submitSuccess = ref(false);
 const submitError = ref('');
 const countriesLoading = ref(false);
-const keyCodesLoading = ref(false);
 
 // قائمة الوظائف الشائعة حول العالم
 const popularJobs = ref([
@@ -565,16 +570,46 @@ const popularJobs = ref([
   { id: 50, name: 'Environmental Scientist' }
 ]);
 
+// قائمة اللغات العالمية
+const languagesList = ref([
+  'English',
+  'Spanish',
+  'French',
+  'German',
+  'Chinese',
+  'Arabic',
+  'Russian',
+  'Portuguese',
+  'Japanese',
+  'Hindi',
+  'Italian',
+  'Dutch',
+  'Korean',
+  'Turkish',
+  'Polish',
+  'Swedish',
+  'Norwegian',
+  'Danish',
+  'Finnish',
+  'Greek',
+  'Hebrew',
+  'Thai',
+  'Vietnamese',
+  'Indonesian',
+  'Malay',
+  'Filipino',
+  'Urdu',
+  'Persian',
+  'Bengali',
+  'Punjabi'
+]);
+
 // computed للحصول على قائمة الدول
 const countries = computed(() => settingStore.countries);
 
-// قائمة Key Codes
-const keyCodes = ref([]);
-
-// جلب الدول و Key Codes عند تحميل الكومبوننت
+// جلب الدول عند تحميل الكومبوننت
 onMounted(async () => {
   await loadCountries();
- 
 });
 
 // دالة لجلب الدول
@@ -592,8 +627,6 @@ async function loadCountries() {
     countriesLoading.value = false;
   }
 }
-
-// دالة لجلب Key Codes
 
 // Language management
 function addLanguage() {
@@ -644,11 +677,12 @@ async function submitEmployee() {
   }
 
   // التحقق من اختيار key code
-if (!employee.key_code_id) {
+  if (!employee.key_code_id) {
     submitError.value = 'Please select a key code country';
     formLoading.value = false;
     return;
   }
+
   try {
     // أولاً: جهز CSRF token
     await useApiFetch('/sanctum/csrf-cookie', {
@@ -678,7 +712,7 @@ if (!employee.key_code_id) {
     
     // الحقول الناقصة
     formData.append('skills', employee.skills);
-    formData.append('key_code_id', employee.key_code_id); // هذا سيكون ID الدولة
+    formData.append('key_code_id', employee.key_code_id);
     
     // المصفوفات
     employee.languages.forEach((lang, index) => {
@@ -698,12 +732,11 @@ if (!employee.key_code_id) {
     if (employee.image) formData.append('image', employee.image);
     if (employee.application) formData.append('application', employee.application);
 
-    // ثالثاً: إرسال البيانات باستخدام $fetch مباشرة
+    // ثالثاً: إرسال البيانات
     const response = await useApiFetch('/api/employee/store', {
       method: 'POST',
       body: formData,
       credentials: 'include',
-      baseURL: useRuntimeConfig().public.apiBase,
       headers: {
         'Accept': 'application/json',
       }

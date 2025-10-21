@@ -123,7 +123,7 @@ watch(
     () => {
         isMenuOpen.value = false;
         mobileMenuOpen.value = false;
-    }
+    },
 );
 </script>
 
@@ -134,8 +134,7 @@ watch(
                 <!-- الشعار -->
                 <div class="intro-x shrink-0">
                     <NuxtLink :to="'/'">
-                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" 
-                                class="h-10 md:h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
+                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" class="h-10 md:h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
                     </NuxtLink>
                 </div>
 
@@ -145,7 +144,7 @@ watch(
                     <button class="btn btn-sm btn-outline" @click="openContactModal">
                         <Icon name="ph:phone-light" class="h-4 w-4" />
                     </button>
-                    
+
                     <!-- زر قائمة الهاتف -->
                     <button class="btn btn-sm btn-outline" @click="toggleMobileMenu">
                         <Icon :name="mobileMenuOpen ? 'ph:x-light' : 'ph:list-light'" class="h-4 w-4" />
@@ -204,13 +203,13 @@ watch(
                         <Icon name="ph:briefcase-light" class="mr-2 h-4 w-4" />
                         Aplay Job
                     </NuxtLink>
-                    
+
                     <!-- زر company_Login -->
                     <NuxtLink to="/company" class="btn btn-outline btn-sm">
                         <Icon name="ph:buildings-light" class="mr-2 h-4 w-4" />
                         Company Login
                     </NuxtLink>
-                    
+
                     <!-- زر Contact -->
                     <button :class="['group px-4 btn btn-' + contactButton.style]" @click="openContactModal">
                         <Icon v-if="contactButton.icon" :name="contactButton.icon" class="mr-2 h-5 w-5" />
@@ -225,16 +224,12 @@ watch(
                     <ul class="space-y-2">
                         <template v-for="item in headerMenu" :key="item.link">
                             <li v-if="item.subMenus.length === 0">
-                                <NuxtLink 
-                                    :to="item.link" 
-                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
-                                    @click="toggleMobileMenu"
-                                >
+                                <NuxtLink :to="item.link" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" @click="toggleMobileMenu">
                                     <Icon :name="item.icon" class="mr-3 h-5 w-5" />
                                     <span class="font-medium">{{ item.name }}</span>
                                 </NuxtLink>
                             </li>
-                            
+
                             <li v-else>
                                 <div class="px-4 py-3 font-medium text-gray-700 flex items-center">
                                     <Icon :name="item.icon" class="mr-3 h-5 w-5" />
@@ -242,11 +237,7 @@ watch(
                                 </div>
                                 <ul class="ml-8 space-y-1 mt-1">
                                     <li v-for="subItem in item.subMenus" :key="subItem.link">
-                                        <NuxtLink 
-                                            :to="subItem.link" 
-                                            class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
-                                            @click="toggleMobileMenu"
-                                        >
+                                        <NuxtLink :to="subItem.link" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg" @click="toggleMobileMenu">
                                             <Icon :name="subItem.icon" class="mr-3 h-4 w-4" />
                                             <span class="text-sm">{{ subItem.name }}</span>
                                         </NuxtLink>
@@ -254,22 +245,14 @@ watch(
                                 </ul>
                             </li>
                         </template>
-                        
+
                         <!-- الأزرار المهمة في قائمة الهاتف -->
                         <li class="border-t pt-3 mt-3">
-                            <NuxtLink 
-                                to="/empley" 
-                                class="flex items-center px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg mb-2"
-                                @click="toggleMobileMenu"
-                            >
+                            <NuxtLink to="/empley" class="flex items-center px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg mb-2" @click="toggleMobileMenu">
                                 <Icon name="ph:briefcase-light" class="mr-3 h-5 w-5" />
                                 <span class="font-medium">Aplay Job</span>
                             </NuxtLink>
-                            <NuxtLink 
-                                to="/company" 
-                                class="flex items-center px-4 py-3 text-green-600 hover:bg-green-50 rounded-lg"
-                                @click="toggleMobileMenu"
-                            >
+                            <NuxtLink to="/company" class="flex items-center px-4 py-3 text-green-600 hover:bg-green-50 rounded-lg" @click="toggleMobileMenu">
                                 <Icon name="ph:buildings-light" class="mr-3 h-5 w-5" />
                                 <span class="font-medium">Company Login</span>
                             </NuxtLink>
