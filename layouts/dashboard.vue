@@ -23,7 +23,7 @@ const menu = ref([
     },
     { name: 'Contact Messages', path: '/dashboard/messages', icon: 'ph:envelope-light', subMenus: [] },
     { name: 'Users', path: '/dashboard/users', icon: 'ph:users-duotone', subMenus: [] },
-    { name: 'employee', path: '/dashboard/empley', icon: 'ph:users-duotone', subMenus: [] },
+    { name: 'Employees', path: '/dashboard/employees', icon: 'ph:users-duotone', subMenus: [] },
         { name: 'company', path: '/dashboard/company', icon: 'ph:gear-six-light', subMenus: [] },
 
     { name: 'Settings', path: '/dashboard/settings', icon: 'ph:gear-six-light', subMenus: [] },

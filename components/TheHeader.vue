@@ -5,8 +5,7 @@ import { useVuelidate } from '@vuelidate/core';
 const headerMenu = ref([
     { name: 'Home', link: '/', icon: 'ph:house-line-light', subMenus: [] },
     { name: 'About', link: '/about', icon: 'ph:info-light', subMenus: [] },
-    { name: 'Aplay_Job', link: '/empley', icon: 'ph:info-light', subMenus: [] },
-    { name: 'company_Login', link: '/company', icon: 'ph:info-light', subMenus: [] },
+
     {
         name: 'Services',
         link: '/services',
@@ -28,7 +27,6 @@ const headerMenu = ref([
             },
         ],
     },
-    // { name: 'Gallery', link: '/gallery', icon: 'ph:panorama-light' },
 ]);
 
 const contactButton = useSettingValue('header_button');
@@ -112,26 +110,50 @@ function desktopDropDownMenu() {
     isMenuOpen.value = !isMenuOpen.value;
 }
 
+// إضافة متغير للتحكم في قائمة الهاتف
+const mobileMenuOpen = ref(false);
+
+// دالة لفتح/إغلاق قائمة الهاتف
+function toggleMobileMenu() {
+    mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
 watch(
     () => route.path,
-    (newPath, oldPath) => {
-        if (newPath !== oldPath) {
-            isMenuOpen.value = false;
-        }
-    },
+    () => {
+        isMenuOpen.value = false;
+        mobileMenuOpen.value = false;
+    }
 );
 </script>
 
 <template>
     <div class="bg-white px-2 shadow-lg dark:bg-slate-900 -intro-y !z-[999]">
-        <div class="mx-auto container px-8">
-            <div class="flex items-center justify-between gap-8 duration-300 w-full">
+        <div class="mx-auto container px-4 md:px-8">
+            <div class="flex items-center justify-between gap-4 md:gap-8 duration-300 w-full">
+                <!-- الشعار -->
                 <div class="intro-x shrink-0">
                     <NuxtLink :to="'/'">
-                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" class="h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
+                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" 
+                                class="h-10 md:h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
                     </NuxtLink>
                 </div>
-                <ul class="md:flex items-center gap-4 text-[14px] xl:text-[16px] hidden">
+
+                <!-- قائمة الهواتف - أيقونة القائمة -->
+                <div class="md:hidden flex items-center gap-2">
+                    <!-- الأزرار المهمة للهواتف -->
+                    <button class="btn btn-sm btn-outline" @click="openContactModal">
+                        <Icon name="ph:phone-light" class="h-4 w-4" />
+                    </button>
+                    
+                    <!-- زر قائمة الهاتف -->
+                    <button class="btn btn-sm btn-outline" @click="toggleMobileMenu">
+                        <Icon :name="mobileMenuOpen ? 'ph:x-light' : 'ph:list-light'" class="h-4 w-4" />
+                    </button>
+                </div>
+
+                <!-- قائمة سطح المكتب -->
+                <ul class="hidden md:flex items-center gap-4 text-[14px] xl:text-[16px]">
                     <template v-for="item in headerMenu" :key="item.link">
                         <li v-if="item.subMenus.length === 0" class="group relative">
                             <NuxtLink :to="item.link" class="relative overflow-hidden flex items-center px-4 py-8">
@@ -174,12 +196,90 @@ watch(
                         </HeadlessMenu>
                     </template>
                 </ul>
-                <button :class="['group px-4 btn btn-' + contactButton.style]" @click="openContactModal">
-                    <Icon v-if="contactButton.icon" :name="contactButton.icon" class="mr-2 h-5 w-5" />
-                    {{ contactButton.label }}
-                </button>
+
+                <!-- الأزرار الهامة - سطح المكتب -->
+                <div class="hidden md:flex items-center gap-3">
+                    <!-- زر Aplay_Job -->
+                    <NuxtLink to="/empley" class="btn btn-outline btn-sm">
+                        <Icon name="ph:briefcase-light" class="mr-2 h-4 w-4" />
+                        Aplay Job
+                    </NuxtLink>
+                    
+                    <!-- زر company_Login -->
+                    <NuxtLink to="/company" class="btn btn-outline btn-sm">
+                        <Icon name="ph:buildings-light" class="mr-2 h-4 w-4" />
+                        Company Login
+                    </NuxtLink>
+                    
+                    <!-- زر Contact -->
+                    <button :class="['group px-4 btn btn-' + contactButton.style]" @click="openContactModal">
+                        <Icon v-if="contactButton.icon" :name="contactButton.icon" class="mr-2 h-5 w-5" />
+                        {{ contactButton.label }}
+                    </button>
+                </div>
             </div>
+
+            <!-- قائمة الهواتف المنزلقة -->
+            <Transition name="slide-down">
+                <div v-if="mobileMenuOpen" class="md:hidden bg-white shadow-lg mt-2 rounded-lg py-4">
+                    <ul class="space-y-2">
+                        <template v-for="item in headerMenu" :key="item.link">
+                            <li v-if="item.subMenus.length === 0">
+                                <NuxtLink 
+                                    :to="item.link" 
+                                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                                    @click="toggleMobileMenu"
+                                >
+                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
+                                    <span class="font-medium">{{ item.name }}</span>
+                                </NuxtLink>
+                            </li>
+                            
+                            <li v-else>
+                                <div class="px-4 py-3 font-medium text-gray-700 flex items-center">
+                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
+                                    <span>{{ item.name }}</span>
+                                </div>
+                                <ul class="ml-8 space-y-1 mt-1">
+                                    <li v-for="subItem in item.subMenus" :key="subItem.link">
+                                        <NuxtLink 
+                                            :to="subItem.link" 
+                                            class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                                            @click="toggleMobileMenu"
+                                        >
+                                            <Icon :name="subItem.icon" class="mr-3 h-4 w-4" />
+                                            <span class="text-sm">{{ subItem.name }}</span>
+                                        </NuxtLink>
+                                    </li>
+                                </ul>
+                            </li>
+                        </template>
+                        
+                        <!-- الأزرار المهمة في قائمة الهاتف -->
+                        <li class="border-t pt-3 mt-3">
+                            <NuxtLink 
+                                to="/empley" 
+                                class="flex items-center px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg mb-2"
+                                @click="toggleMobileMenu"
+                            >
+                                <Icon name="ph:briefcase-light" class="mr-3 h-5 w-5" />
+                                <span class="font-medium">Aplay Job</span>
+                            </NuxtLink>
+                            <NuxtLink 
+                                to="/company" 
+                                class="flex items-center px-4 py-3 text-green-600 hover:bg-green-50 rounded-lg"
+                                @click="toggleMobileMenu"
+                            >
+                                <Icon name="ph:buildings-light" class="mr-3 h-5 w-5" />
+                                <span class="font-medium">Company Login</span>
+                            </NuxtLink>
+                        </li>
+                    </ul>
+                </div>
+            </Transition>
         </div>
+
+        <!-- نافذة الاتصال (تبقى كما هي) -->
         <TheModal :open-modal="contactModal" size="3xl" static @close-modal="closeContactModal">
             <template #content>
                 <div>
@@ -211,3 +311,16 @@ watch(
         </TheModal>
     </div>
 </template>
+
+<style scoped>
+.slide-down-enter-active,
+.slide-down-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+</style>

@@ -4,7 +4,7 @@
     <div class="flex items-center justify-between">
       <div class="text-lg font-medium">Employees Management</div>
       <div class="text-sm text-gray-500">
-        Total: {{ employeesData?.total || 0 }} employees
+        Total: {{ allEmployees.length }} employees
       </div>
     </div>
 
@@ -23,7 +23,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
           <input
-            v-model="serverParams.search"
+            v-model="filters.search"
             type="text"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Name, email, skills..."
@@ -34,7 +34,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
           <select
-            v-model="serverParams.country_id"
+            v-model="filters.country_id"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">All Countries</option>
@@ -52,7 +52,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
           <select
-            v-model="serverParams.type_job"
+            v-model="filters.type_job"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">All Types</option>
@@ -67,7 +67,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
           <input
-            v-model="serverParams.nationality"
+            v-model="filters.nationality"
             type="text"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Nationality"
@@ -78,7 +78,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
           <input
-            v-model="serverParams.skills"
+            v-model="filters.skills"
             type="text"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Specific skills"
@@ -89,12 +89,12 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
           <select
-            v-model="serverParams.language"
+            v-model="filters.language"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">All Languages</option>
             <option 
-              v-for="lang in uniqueLanguages" 
+              v-for="lang in languagesList" 
               :key="lang"
               :value="lang"
             >
@@ -103,20 +103,20 @@
           </select>
         </div>
 
-        <!-- Preferred Job -->
+        <!-- Preferred Job - ده اللي عاوزه -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Job</label>
           <select
-            v-model="serverParams.favorite_work"
+            v-model="filters.favorite_work"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">All Jobs</option>
             <option 
-              v-for="job in uniqueJobs" 
-              :key="job"
-              :value="job"
+              v-for="job in popularJobs" 
+              :key="job.id"
+              :value="job.name"
             >
-              {{ job }}
+              {{ job.name }}
             </option>
           </select>
         </div>
@@ -126,32 +126,21 @@
           <label class="block text-sm font-medium text-gray-700 mb-2">Registration Date</label>
           <div class="grid grid-cols-2 gap-3">
             <input
-              v-model="serverParams.date_from"
+              v-model="filters.date_from"
               type="date"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <input
-              v-model="serverParams.date_to"
+              v-model="filters.date_to"
               type="date"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
       </div>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-        <button class="btn btn-secondary" @click="resetSearch">
-          <Icon name="solar:restart-linear" class="w-4 h-4 mr-2" />
-          Reset
-        </button>
-        <button class="btn btn-primary" @click="search">
-          <Icon name="solar:magnifer-linear" class="w-4 h-4 mr-2" />
-          Apply Filters
-        </button>
-      </div>
     </div>
 
+    <!-- باقي الكود بدون تغيير -->
     <!-- Employees Table -->
     <div class="bg-white rounded-lg shadow-sm border">
       <table class="table table-report w-full">
@@ -166,9 +155,9 @@
         </thead>
         <tbody>
           <template v-if="!pending">
-            <template v-if="employeesData && employeesData.data && employeesData.data.length > 0">
+            <template v-if="filteredEmployees.length > 0">
               <tr 
-                v-for="employee in employeesData.data" 
+                v-for="employee in paginatedEmployees" 
                 :key="employee.id" 
                 class="text-sm border-b hover:bg-gray-50"
               >
@@ -204,7 +193,9 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <Icon name="solar:point-on-map-linear" class="w-4 h-4 text-gray-400" />
-                      <span class="text-gray-600">{{ employee.city }}, {{ employee.country }}</span>
+                      <span class="text-gray-600">
+                        {{ employee.city }}, {{ employee.country }}
+                      </span>
                     </div>
                   </div>
                 </td>
@@ -214,12 +205,32 @@
                   <div class="space-y-2">
                     <div>
                       <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full capitalize">
-                        {{ employee.type_job?.replace('_', ' ') || 'N/A' }}
+                        {{ formatJobType(employee.type_job) }}
                       </span>
                     </div>
                     <div v-if="employee.skills" class="text-xs text-gray-600 line-clamp-2">
                       {{ employee.skills }}
                     </div>
+                    <div v-else class="text-xs text-gray-400">No skills specified</div>
+                    
+                    <!-- عرض الوظائف المفضلة -->
+                    <div v-if="employee.favorite_work && employee.favorite_work.length > 0" class="flex flex-wrap gap-1">
+                      <span 
+                        v-for="(job, jobIndex) in employee.favorite_work.slice(0, 3)" 
+                        :key="jobIndex"
+                        class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"
+                      >
+                        {{ job }}
+                      </span>
+                      <span 
+                        v-if="employee.favorite_work.length > 3" 
+                        class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"
+                      >
+                        +{{ employee.favorite_work.length - 3 }}
+                      </span>
+                    </div>
+                    <div v-else class="text-xs text-gray-400">No preferred jobs</div>
+                    
                     <div v-if="employee.languages && employee.languages.length > 0" class="flex flex-wrap gap-1">
                       <span 
                         v-for="(lang, langIndex) in employee.languages.slice(0, 2)" 
@@ -235,6 +246,7 @@
                         +{{ employee.languages.length - 2 }}
                       </span>
                     </div>
+                    <div v-else class="text-xs text-gray-400">No languages</div>
                   </div>
                 </td>
 
@@ -248,13 +260,13 @@
                 <!-- Actions -->
                 <td class="p-4">
                   <div class="flex items-center gap-2">
-                    <NuxtLink 
-                      :to="`/employees/${employee.id}`"
+                    <button 
+                      @click="viewEmployee(employee.id)"
                       class="btn btn-sm btn-outline-primary flex items-center gap-2"
                     >
                       <Icon name="solar:eye-linear" class="w-4 h-4" />
                       View
-                    </NuxtLink>
+                    </button>
                     <button 
                       class="btn btn-sm btn-outline-danger flex items-center gap-2"
                       @click="deleteItem(employee.id)"
@@ -318,17 +330,17 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="!pending && employeesData && employeesData.data && employeesData.data.length > 0" 
+    <div v-if="!pending && filteredEmployees.length > 0" 
          class="flex items-center justify-between gap-4">
       <div class="text-sm text-gray-600">
-        Showing {{ employeesData.from }} to {{ employeesData.to }} of {{ employeesData.total }} employees
+        Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredEmployees.length }} employees
       </div>
       
       <div class="flex items-center gap-2">
         <button 
-          :disabled="!employeesData.prev_page_url" 
+          :disabled="currentPage === 1" 
           class="btn btn-sm btn-outline-secondary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="changePage(employeesData.current_page - 1)"
+          @click="changePage(currentPage - 1)"
         >
           <Icon name="solar:alt-arrow-left-linear" class="w-4 h-4" />
           Previous
@@ -336,24 +348,23 @@
         
         <div class="flex items-center gap-1">
           <button 
-            v-for="(link, index) in employeesData.links" 
-            :key="index"
+            v-for="page in totalPages" 
+            :key="page"
             :class="[
               'btn btn-sm',
-              link.active ? 'btn-primary' : 'btn-outline-secondary',
-              index === 0 || index === employeesData.links.length - 1 ? 'px-3' : 'px-4'
+              page === currentPage ? 'btn-primary' : 'btn-outline-secondary',
+              'px-4'
             ]"
-            :disabled="!link.url || link.active"
-            @click="changePage(link.label)"
+            @click="changePage(page)"
           >
-            <span v-html="link.label"></span>
+            {{ page }}
           </button>
         </div>
         
         <button 
-          :disabled="!employeesData.next_page_url" 
+          :disabled="currentPage === totalPages" 
           class="btn btn-sm btn-outline-secondary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="changePage(employeesData.current_page + 1)"
+          @click="changePage(currentPage + 1)"
         >
           Next
           <Icon name="solar:alt-arrow-right-linear" class="w-4 h-4" />
@@ -382,23 +393,22 @@ interface Employee {
   favorite_work: string[];
   image: string | null;
   cv: string | null;
+  application: string | null;
   company_name: string | null;
   responsible_name: string | null;
   created_at: string;
 }
 
-interface ServerParams {
-  paginate: number;
-  page: number;
-  search: string | null;
-  country_id: string | null;
-  type_job: string | null;
-  nationality: string | null;
-  skills: string | null;
-  language: string | null;
-  favorite_work: string | null;
-  date_from: string | null;
-  date_to: string | null;
+interface Filters {
+  search: string;
+  country_id: string;
+  type_job: string;
+  nationality: string;
+  skills: string;
+  language: string;
+  favorite_work: string;
+  date_from: string;
+  date_to: string;
 }
 
 // Page Meta
@@ -407,25 +417,219 @@ definePageMeta({
   middleware: 'auth',
 });
 
+// قائمة الوظائف الشائعة - ده اللي عاوزه
+const popularJobs = ref([
+  { id: 1, name: 'Software Developer' },
+  { id: 2, name: 'Data Scientist' },
+  { id: 3, name: 'Project Manager' },
+  { id: 4, name: 'Marketing Specialist' },
+  { id: 5, name: 'Sales Representative' },
+  { id: 6, name: 'Graphic Designer' },
+  { id: 7, name: 'Accountant' },
+  { id: 8, name: 'HR Manager' },
+  { id: 9, name: 'Customer Service' },
+  { id: 10, name: 'Teacher' },
+  { id: 11, name: 'Nurse' },
+  { id: 12, name: 'Doctor' },
+  { id: 13, name: 'Engineer' },
+  { id: 14, name: 'Architect' },
+  { id: 15, name: 'Chef' },
+  { id: 16, name: 'Electrician' },
+  { id: 17, name: 'Plumber' },
+  { id: 18, name: 'Mechanic' },
+  { id: 19, name: 'Driver' },
+  { id: 20, name: 'Security Guard' },
+  { id: 21, name: 'Receptionist' },
+  { id: 22, name: 'Administrative Assistant' },
+  { id: 23, name: 'Financial Analyst' },
+  { id: 24, name: 'Web Developer' },
+  { id: 25, name: 'IT Support' },
+  { id: 26, name: 'Content Writer' },
+  { id: 27, name: 'Social Media Manager' },
+  { id: 28, name: 'Photographer' },
+  { id: 29, name: 'Videographer' },
+  { id: 30, name: 'Translator' },
+  { id: 31, name: 'Interpreter' },
+  { id: 32, name: 'Lawyer' },
+  { id: 33, name: 'Paralegal' },
+  { id: 34, name: 'Real Estate Agent' },
+  { id: 35, name: 'Insurance Agent' },
+  { id: 36, name: 'Bank Teller' },
+  { id: 37, name: 'Loan Officer' },
+  { id: 38, name: 'Pharmacist' },
+  { id: 39, name: 'Dental Hygienist' },
+  { id: 40, name: 'Physical Therapist' },
+  { id: 41, name: 'Occupational Therapist' },
+  { id: 42, name: 'Veterinarian' },
+  { id: 43, name: 'Zoologist' },
+  { id: 44, name: 'Biologist' },
+  { id: 45, name: 'Chemist' },
+  { id: 46, name: 'Physicist' },
+  { id: 47, name: 'Astronomer' },
+  { id: 48, name: 'Geologist' },
+  { id: 49, name: 'Meteorologist' },
+  { id: 50, name: 'Environmental Scientist' }
+]);
+
+// قائمة اللغات العالمية
+const languagesList = ref([
+  'English',
+  'Spanish',
+  'French',
+  'German',
+  'Chinese',
+  'Arabic',
+  'Russian',
+  'Portuguese',
+  'Japanese',
+  'Hindi',
+  'Italian',
+  'Dutch',
+  'Korean',
+  'Turkish',
+  'Polish',
+  'Swedish',
+  'Norwegian',
+  'Danish',
+  'Finnish',
+  'Greek',
+  'Hebrew',
+  'Thai',
+  'Vietnamese',
+  'Indonesian',
+  'Malay',
+  'Filipino',
+  'Urdu',
+  'Persian',
+  'Bengali',
+  'Punjabi'
+]);
+
 // Reactive Data
-const serverParams = ref<ServerParams>({
-  paginate: 10,
-  page: 1,
-  search: null,
-  country_id: null,
-  type_job: null,
-  nationality: null,
-  skills: null,
-  language: null,
-  favorite_work: null,
-  date_from: null,
-  date_to: null,
+const filters = reactive<Filters>({
+  search: '',
+  country_id: '',
+  type_job: '',
+  nationality: '',
+  skills: '',
+  language: '',
+  favorite_work: '',
+  date_from: '',
+  date_to: '',
 });
+
+// Pagination
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 // Data for filters
 const countries = ref([]);
-const uniqueLanguages = ref<string[]>([]);
-const uniqueJobs = ref<string[]>([]);
+
+// Fetch all employees
+const { data: employeesResponse, pending, refresh } = await useAsyncData(
+  'employees',
+  async () => {
+    try {
+      const { data, error } = await useApiFetch('/api/employee');
+      
+      if (error.value) {
+        throw error.value;
+      }
+
+      return data.value;
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      return null;
+    }
+  }
+);
+
+// Extract employees data
+const allEmployees = computed(() => {
+  if (!employeesResponse.value) {
+    return [];
+  }
+  
+  const response = employeesResponse.value;
+  
+  // البيانات بتكون في response.data.data
+  if (response.data && response.data.data && Array.isArray(response.data.data)) {
+    return response.data.data;
+  }
+  
+  return [];
+});
+
+// Filtered employees - مع إضافة فلترة الوظائف المفضلة
+const filteredEmployees = computed(() => {
+  if (!allEmployees.value.length) return [];
+
+  return allEmployees.value.filter((employee: Employee) => {
+    // Search filter
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      const searchableFields = [
+        employee.name,
+        employee.email,
+        employee.skills,
+        employee.nationality,
+        employee.city,
+        employee.country
+      ].filter(Boolean).join(' ').toLowerCase();
+      
+      if (!searchableFields.includes(searchTerm)) return false;
+    }
+
+    // Country filter
+    if (filters.country_id && employee.country_id !== filters.country_id) return false;
+
+    // Job type filter
+    if (filters.type_job && employee.type_job !== filters.type_job) return false;
+
+    // Nationality filter
+    if (filters.nationality && !employee.nationality?.toLowerCase().includes(filters.nationality.toLowerCase())) return false;
+
+    // Skills filter
+    if (filters.skills && !employee.skills?.toLowerCase().includes(filters.skills.toLowerCase())) return false;
+
+    // Language filter
+    if (filters.language && (!employee.languages || !employee.languages.includes(filters.language))) return false;
+
+    // Preferred Job filter - ده اللي عاوزه
+    if (filters.favorite_work && (!employee.favorite_work || !employee.favorite_work.includes(filters.favorite_work))) return false;
+
+    // Date range filter
+    if (filters.date_from || filters.date_to) {
+      const employeeDate = new Date(employee.created_at);
+      
+      if (filters.date_from) {
+        const fromDate = new Date(filters.date_from);
+        if (employeeDate < fromDate) return false;
+      }
+      
+      if (filters.date_to) {
+        const toDate = new Date(filters.date_to);
+        toDate.setHours(23, 59, 59, 999);
+        if (employeeDate > toDate) return false;
+      }
+    }
+
+    return true;
+  });
+});
+
+// باقي الكود بدون تغيير
+// Paginated employees
+const paginatedEmployees = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredEmployees.value.slice(start, end);
+});
+
+// Pagination info
+const totalPages = computed(() => Math.ceil(filteredEmployees.value.length / itemsPerPage.value));
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
+const endIndex = computed(() => Math.min(startIndex.value + itemsPerPage.value, filteredEmployees.value.length));
 
 // Fetch filter data
 onMounted(async () => {
@@ -434,100 +638,37 @@ onMounted(async () => {
 
 async function loadFilterData() {
   try {
-    // جلب الدول من الـ store
     const settingStore = useSettingsStore();
     if (settingStore.countries.length === 0) {
       await settingStore.fetchCountries();
     }
     countries.value = settingStore.countries || [];
-
-    // جلب بيانات الموظفين لاستخراج اللغات والوظائف الفريدة
-    await loadEmployeesForFilters();
   } catch (error) {
     console.error('Error loading filter data:', error);
   }
 }
 
-async function loadEmployeesForFilters() {
-  try {
-    const { data } = await useApiFetch('/api/employee', {
-      query: { paginate: 1000 }
-    });
-    
-    if (data.value?.data) {
-      const employees = data.value.data;
-      
-      // استخراج اللغات الفريدة
-      const allLanguages = employees.flatMap(emp => emp.languages || []);
-      uniqueLanguages.value = [...new Set(allLanguages)].filter(lang => lang && lang.trim());
-      
-      // استخراج الوظائف الفريدة
-      const allJobs = employees.flatMap(emp => emp.favorite_work || []);
-      uniqueJobs.value = [...new Set(allJobs)].filter(job => job && job.trim());
-    }
-  } catch (error) {
-    console.error('Error loading employees for filters:', error);
-  }
-}
-
-// استخدام useAsyncData للـ data fetching
-const { data: employeesData, pending, refresh } = await useAsyncData(
-  'employees',
-  async () => {
-    try {
-      // تنظيف الـ params من القيم الفارغة
-      const cleanParams = Object.fromEntries(
-        Object.entries(serverParams.value).filter(([_, value]) => 
-          value !== null && value !== '' && value !== undefined
-        )
-      );
-
-      const { data, error } = await useApiFetch('/api/employee', {
-        query: cleanParams,
-      });
-
-      if (error.value) {
-        throw error.value;
-      }
-
-      return data.value?.data;
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-      return null;
-    }
-  },
-  {
-    watch: [serverParams],
-  }
-);
-
 // Pagination Functions
-const changePage = (value: number | string) => {
-  const pageNumber = typeof value === 'string' ? parseInt(value) : value;
-  if (!isNaN(pageNumber) && pageNumber > 0) {
-    serverParams.value.page = pageNumber;
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
   }
 };
 
 // Search Functions
-const search = () => {
-  serverParams.value.page = 1;
-};
-
 const resetSearch = () => {
-  serverParams.value = {
-    paginate: 10,
-    page: 1,
-    search: null,
-    country_id: null,
-    type_job: null,
-    nationality: null,
-    skills: null,
-    language: null,
-    favorite_work: null,
-    date_from: null,
-    date_to: null,
-  };
+  Object.assign(filters, {
+    search: '',
+    country_id: '',
+    type_job: '',
+    nationality: '',
+    skills: '',
+    language: '',
+    favorite_work: '',
+    date_from: '',
+    date_to: '',
+  });
+  currentPage.value = 1;
 };
 
 // Delete Employee
@@ -568,17 +709,18 @@ function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US');
 }
 
-// Watch for serverParams changes to auto-refresh
-watch(serverParams, async () => {
-  await refresh();
-}, { deep: true });
+// Format job type function
+function formatJobType(type: string) {
+  const types: { [key: string]: string } = {
+    full_time: 'Full Time',
+    part_time: 'Part Time',
+    contract: 'Contract',
+    freelance: 'Freelance'
+  };
+  return types[type] || type;
+}
 
-// Debounced search
-const debouncedSearch = ref(null);
-watch(() => serverParams.value.search, () => {
-  if (debouncedSearch.value) clearTimeout(debouncedSearch.value);
-  debouncedSearch.value = setTimeout(() => {
-    serverParams.value.page = 1;
-  }, 500);
-});
+const viewEmployee = (id: number) => {
+  navigateTo(`/dashboard/employees/${id}`);
+};
 </script>
