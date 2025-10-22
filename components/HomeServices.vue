@@ -6,6 +6,7 @@ defineProps({
     },
 });
 const { data: services, pending } = await useApiFetch<BackendResponse>(`/api/service-home`, { lazy: true });
+console.log(services)
 </script>
 
 <template>

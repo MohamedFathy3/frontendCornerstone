@@ -17,10 +17,15 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <!-- Search -->
+                <!-- Search - تم تحديث النص التوضيحي -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                    <input v-model="filters.search" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Name, email, skills..." />
+                    <input 
+                        v-model="filters.search" 
+                        type="text" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                        placeholder="Name, email, phone, skills..." 
+                    />
                 </div>
 
                 <!-- Country -->
@@ -69,7 +74,7 @@
                     </select>
                 </div>
 
-                <!-- Preferred Job - ده اللي عاوزه -->
+                <!-- Preferred Job -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Job</label>
                     <select v-model="filters.favorite_work" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -313,7 +318,7 @@ definePageMeta({
     middleware: 'auth',
 });
 
-// قائمة الوظائف الشائعة - ده اللي عاوزه
+// قائمة الوظائف الشائعة
 const popularJobs = ref([
     { id: 1, name: 'Software Developer' },
     { id: 2, name: 'Data Scientist' },
@@ -457,15 +462,23 @@ const allEmployees = computed(() => {
     return [];
 });
 
-// Filtered employees - مع إضافة فلترة الوظائف المفضلة
+// Filtered employees - تم تحديث البحث ليشمل رقم الهاتف
 const filteredEmployees = computed(() => {
     if (!allEmployees.value.length) return [];
 
     return allEmployees.value.filter((employee: Employee) => {
-        // Search filter
+        // Search filter - تم التحديث ليشمل رقم الهاتف
         if (filters.search) {
             const searchTerm = filters.search.toLowerCase();
-            const searchableFields = [employee.name, employee.email, employee.skills, employee.nationality, employee.city, employee.country].filter(Boolean).join(' ').toLowerCase();
+            const searchableFields = [
+                employee.name, 
+                employee.email, 
+                employee.phone, // إضافة رقم الهاتف للبحث
+                employee.skills, 
+                employee.nationality, 
+                employee.city, 
+                employee.country
+            ].filter(Boolean).join(' ').toLowerCase();
 
             if (!searchableFields.includes(searchTerm)) return false;
         }
@@ -485,7 +498,7 @@ const filteredEmployees = computed(() => {
         // Language filter
         if (filters.language && (!employee.languages || !employee.languages.includes(filters.language))) return false;
 
-        // Preferred Job filter - ده اللي عاوزه
+        // Preferred Job filter
         if (filters.favorite_work && (!employee.favorite_work || !employee.favorite_work.includes(filters.favorite_work))) return false;
 
         // Date range filter
@@ -508,7 +521,6 @@ const filteredEmployees = computed(() => {
     });
 });
 
-// باقي الكود بدون تغيير
 // Paginated employees
 const paginatedEmployees = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;

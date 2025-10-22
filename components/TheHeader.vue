@@ -118,6 +118,22 @@ function toggleMobileMenu() {
     mobileMenuOpen.value = !mobileMenuOpen.value;
 }
 
+// إضافة حالة المستخدم
+const user = ref(null); // سيتم تعبئتها من الـ auth
+const isLoggedIn = computed(() => !!user.value);
+
+// دالة للتحقق من حالة المستخدم (ستحتاج لتعديلها حسب نظامك)
+const checkAuth = async () => {
+    // هنا ضع الكود للتحقق من حالة تسجيل الدخول
+    // مثال: 
+    // const { data } = await useApiFetch('/api/user');
+    // user.value = data.value;
+};
+
+onMounted(() => {
+    checkAuth();
+});
+
 watch(
     () => route.path,
     () => {
@@ -140,6 +156,14 @@ watch(
 
                 <!-- قائمة الهواتف - أيقونة القائمة -->
                 <div class="md:hidden flex items-center gap-2">
+                    <!-- زر Login/Profile للهواتف -->
+                    <NuxtLink v-if="isLoggedIn" to="/profile" class="btn btn-sm btn-outline">
+                        <Icon name="ph:user-light" class="h-4 w-4" />
+                    </NuxtLink>
+                    <NuxtLink v-else to="/auth" class="btn btn-sm btn-outline">
+                        <Icon name="ph:sign-in-light" class="h-4 w-4" />
+                    </NuxtLink>
+
                     <!-- الأزرار المهمة للهواتف -->
                     <button class="btn btn-sm btn-outline" @click="openContactModal">
                         <Icon name="ph:phone-light" class="h-4 w-4" />
@@ -194,10 +218,29 @@ watch(
                             </TransitionExpand>
                         </HeadlessMenu>
                     </template>
+                    
+                    <!-- إضافة زر Contact Us بجانب Services -->
+                    <li class="group relative">
+                        <button class="group relative overflow-hidden flex items-center px-4 py-8" @click="openContactModal">
+                            <Icon name="ph:phone-light" class="z-20 mr-2 h-6 w-6 text-slate-600" />
+                            <span class="z-20 font-semibold">Contact Us</span>
+                            <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
+                        </button>
+                    </li>
                 </ul>
 
                 <!-- الأزرار الهامة - سطح المكتب -->
                 <div class="hidden md:flex items-center gap-3">
+                    <!-- زر Login/Profile -->
+                    <NuxtLink v-if="isLoggedIn" to="/profile" class="btn btn-outline btn-sm">
+                        <Icon name="ph:user-light" class="mr-2 h-4 w-4" />
+                        Profile
+                    </NuxtLink>
+                    <NuxtLink v-else to="/auth" class="btn btn-outline btn-sm">
+                        <Icon name="ph:sign-in-light" class="mr-2 h-4 w-4" />
+                        Login
+                    </NuxtLink>
+
                     <!-- زر Aplay_Job -->
                     <NuxtLink to="/empley" class="btn btn-outline btn-sm">
                         <Icon name="ph:briefcase-light" class="mr-2 h-4 w-4" />
@@ -209,12 +252,6 @@ watch(
                         <Icon name="ph:buildings-light" class="mr-2 h-4 w-4" />
                         Company Login
                     </NuxtLink>
-
-                    <!-- زر Contact -->
-                    <button :class="['group px-4 btn btn-' + contactButton.style]" @click="openContactModal">
-                        <Icon v-if="contactButton.icon" :name="contactButton.icon" class="mr-2 h-5 w-5" />
-                        {{ contactButton.label }}
-                    </button>
                 </div>
             </div>
 
@@ -245,6 +282,26 @@ watch(
                                 </ul>
                             </li>
                         </template>
+
+                        <!-- إضافة زر Contact Us في قائمة الهاتف -->
+                        <li>
+                            <button class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left" @click="openContactModal; toggleMobileMenu();">
+                                <Icon name="ph:phone-light" class="mr-3 h-5 w-5" />
+                                <span class="font-medium">Contact Us</span>
+                            </button>
+                        </li>
+
+                        <!-- زر Login/Profile في قائمة الهاتف -->
+                        <li>
+                            <NuxtLink v-if="isLoggedIn" to="/profile" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" @click="toggleMobileMenu">
+                                <Icon name="ph:user-light" class="mr-3 h-5 w-5" />
+                                <span class="font-medium">Profile</span>
+                            </NuxtLink>
+                            <NuxtLink v-else to="/login" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" @click="toggleMobileMenu">
+                                <Icon name="ph:sign-in-light" class="mr-3 h-5 w-5" />
+                                <span class="font-medium">Login</span>
+                            </NuxtLink>
+                        </li>
 
                         <!-- الأزرار المهمة في قائمة الهاتف -->
                         <li class="border-t pt-3 mt-3">

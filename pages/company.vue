@@ -90,65 +90,15 @@
                             <h2 class="text-3xl font-bold text-gray-900">Location Information</h2>
                         </div>
 
-                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                            <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Country <span class="text-red-500">*</span> </label>
-                                <select
-                                    v-model="company.country_id"
-                                    required
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white"
-                                >
-                                    <option value="1">Egypt</option>
-                                    <option value="2">Saudi Arabia</option>
-                                    <option value="3">UAE</option>
-                                    <option value="4">Other</option>
-                                </select>
-                            </div>
-
-                            <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> City <span class="text-red-500">*</span> </label>
-                                <input
-                                    v-model="company.city"
-                                    type="text"
-                                    required
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Enter city"
-                                />
-                            </div>
-                        </div>
-
                         <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Complete Address <span class="text-red-500">*</span> </label>
+                            <label class="block text-lg font-semibold text-gray-800"> Comment <span class="text-red-500">*</span> </label>
                             <textarea
                                 v-model="company.address"
                                 required
                                 rows="3"
                                 class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
-                                placeholder="Enter complete company address"
+                                placeholder="Enter your comment"
                             ></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Company Logo -->
-                    <div class="space-y-8">
-                        <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
-                            <div class="w-3 h-10 bg-purple-500 rounded-full"></div>
-                            <h2 class="text-3xl font-bold text-gray-900">Company Logo</h2>
-                        </div>
-
-                        <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Company Logo </label>
-                            <div class="border-3 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group max-w-2xl mx-auto">
-                                <input id="logo-upload" type="file" accept="image/*" class="hidden" @change="handleFileUpload($event)" />
-                                <label for="logo-upload" class="cursor-pointer">
-                                    <div class="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-200 transition-colors">
-                                        <Icon name="mdi:image" class="h-10 w-10 text-blue-500" />
-                                    </div>
-                                    <p class="text-xl font-semibold text-gray-700 mb-3">Upload Company Logo</p>
-                                    <p class="text-base text-gray-500">JPG, PNG, WEBP (Maximum 5MB)</p>
-                                    <p v-if="company.image" class="text-green-600 font-semibold mt-4 text-lg">✓ {{ company.image.name }}</p>
-                                </label>
-                            </div>
                         </div>
                     </div>
 
@@ -194,7 +144,21 @@ function handleFileUpload(event: Event) {
     }
 }
 
-// Form submission - باستخدام $fetch مباشرة
+// دالة لإعادة تعيين النموذج
+function resetForm() {
+    Object.assign(company, {
+        name: '',
+        responsible_name: '',
+        email: '',
+        phone: '',
+        country_id: '',
+        city: '',
+        address: '',
+        image: null,
+    });
+}
+
+// Form submission
 async function submitCompany() {
     formLoading.value = true;
     submitError.value = '';
@@ -219,31 +183,53 @@ async function submitCompany() {
 
         if (company.image) formData.append('image', company.image);
 
-        // ثالثاً: إرسال البيانات باستخدام $fetch مباشرة
-        const data = await useApiFetch('/api/company/store', {
+        // ثالثاً: إرسال البيانات
+        const { data, error } = await useApiFetch('/api/company/store', {
             method: 'POST',
             body: formData,
             credentials: 'include',
         });
 
-        submitSuccess.value = true;
-
-        // Reset form
-        setTimeout(() => {
-            Object.assign(company, {
-                name: '',
-                responsible_name: '',
-                email: '',
-                phone: '',
-                country_id: '1',
-                city: '',
-                address: '',
-                image: null,
+        if (data.value) {
+            // ✅ النجاح - إظهار Toast وإعادة تعيين النموذج
+            useToast({
+                title: 'Success',
+                message: 'Company registered successfully!',
+                type: 'success',
+                duration: 5000,
             });
-            submitSuccess.value = false;
-        }, 4000);
+
+            submitSuccess.value = true;
+
+            // إعادة تعيين النموذج بعد 3 ثواني
+            setTimeout(() => {
+                resetForm();
+                submitSuccess.value = false;
+            }, 3000);
+
+        } else if (error.value) {
+            // ❌ الخطأ - إظهار Toast بالخطأ
+            useToast({
+                title: 'Error',
+                message: error.value.message || 'Failed to register company',
+                type: 'error',
+                duration: 5000,
+            });
+            
+            submitError.value = error.value.message || 'Failed to register company';
+        }
+
     } catch (err: any) {
         console.error('Submission error:', err);
+        
+        // ❌ خطأ في الشبكة أو الخادم
+        useToast({
+            title: 'Error',
+            message: err.data?.message || err.message || 'Something went wrong. Please try again.',
+            type: 'error',
+            duration: 5000,
+        });
+        
         submitError.value = err.data?.message || err.message || 'Something went wrong. Please try again.';
     } finally {
         formLoading.value = false;
