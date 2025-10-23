@@ -6,15 +6,15 @@
                 <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <Icon name="mdi:account-plus" class="h-12 w-12 text-white" />
                 </div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Employee Registration</h1>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Join our talented team and start your professional journey with us today</p>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Medarbejder Registrering</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Bliv en del af vores talentfulde team og start din professionelle rejse med os i dag</p>
             </div>
 
             <!-- Success Message -->
             <div v-if="submitSuccess" class="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl shadow-lg">
                 <div class="flex items-center justify-center">
                     <Icon name="clarity:success-standard-line" class="h-7 w-7 text-green-500 mr-4" />
-                    <span class="text-green-800 font-semibold text-lg">Employee registered successfully!</span>
+                    <span class="text-green-800 font-semibold text-lg">Medarbejder registreret succesfuldt!</span>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
             <div v-if="countriesLoading" class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-lg">
                 <div class="flex items-center justify-center">
                     <Icon name="eos-icons:three-dots-loading" class="h-7 w-7 text-blue-500 mr-4" />
-                    <span class="text-blue-800 font-semibold text-lg">Loading data...</span>
+                    <span class="text-blue-800 font-semibold text-lg">Indlæser data...</span>
                 </div>
             </div>
 
@@ -41,41 +41,41 @@
                     <div class="space-y-8">
                         <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
                             <div class="w-3 h-10 bg-blue-500 rounded-full"></div>
-                            <h2 class="text-3xl font-bold text-gray-900">Personal Information</h2>
+                            <h2 class="text-3xl font-bold text-gray-900">Personlige Oplysninger</h2>
                         </div>
 
                         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Full Name <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Fulde Navn <span class="text-red-500">*</span> </label>
                                 <input
                                     v-model="employee.name"
                                     type="text"
                                     required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Enter your full name"
+                                    placeholder="Indtast dit fulde navn"
                                 />
                             </div>
 
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Email Address <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> E-mail Adresse <span class="text-red-500">*</span> </label>
                                 <input
                                     v-model="employee.email"
                                     type="email"
                                     required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="your.email@example.com"
+                                    placeholder="din.email@eksempel.dk"
                                 />
                             </div>
 
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Key Code (Country) <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Nøglekode (Land) <span class="text-red-500">*</span> </label>
                                 <select
                                     v-model="employee.key_code_id"
                                     required
                                     :disabled="countriesLoading"
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                                 >
-                                    <option value="">Select a country for key code</option>
+                                    <option value="">Vælg et land for nøglekode</option>
                                     <option v-for="country in countries" :key="country.id" :value="country.id" class="flex items-center space-x-3 py-2">
                                         <div class="flex items-center space-x-3">
                                             <img
@@ -92,139 +92,129 @@
                             </div>
 
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Phone Number <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Telefonnummer <span class="text-red-500">*</span> </label>
                                 <input
                                     v-model="employee.phone"
                                     type="tel"
                                     required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Your phone number"
+                                    placeholder="Dit telefonnummer"
                                 />
                             </div>
+
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Nationality <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Nationalitet <span class="text-red-500">*</span> </label>
                                 <input
                                     v-model="employee.nationality"
                                     type="text"
                                     required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
-                                    placeholder="Your nationality"
+                                    placeholder="Din nationalitet"
                                 />
                             </div>
-                                <div class="space-y-4">
-                                    <label class="block text-lg font-semibold text-gray-800"> Complete Address <span class="text-red-500">*</span> </label>
-                                    <input
-                                        v-model="employee.address"
-                                    type="text"
-                                    required
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder=" Address"
-                                />
-                                </div>
-    <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> City <span class="text-red-500">*</span> </label>
-                                <input
-                                    v-model="employee.city"
-                                    type="text"
-                                    required
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Your city"
-                                />
-                            </div>
+
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Postal Code <span class="text-red-500">*</span> </label>
-                                <input
-                                    v-model="employee.post_nummer"
-                                    type="text"
-                                    required
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Your postal code"
-                                />
-                            </div>
-                        
-                            
-                                 <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Username <span class="text-red-500">*</span> </label>
-                            <input
-                                v-model="employee.user_name"
-                                type="text"
-                                required
-                                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                placeholder="Choose a username"
-                            />
-                        </div>
-
-                        <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Password <span class="text-red-500">*</span> </label>
-                            <input
-                                v-model="employee.password"
-                                type="password"
-                                required
-                                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                placeholder="Enter your password"
-                            />
-                        </div>
-                    </div>
-                        </div>
-                   
-
-                    <!-- Job Information -->
-                    <div class="space-y-8">
-                        <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
-                            <div class="w-3 h-10 bg-green-500 rounded-full"></div>
-                            <h2 class="text-3xl font-bold text-gray-900">Job Information</h2>
-                        </div>
-
-                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                            <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Job Type <span class="text-red-500">*</span> </label>
+                                <label class="block text-lg font-semibold text-gray-800"> By <span class="text-red-500">*</span> </label>
                                 <select
-                                    v-model="employee.type_job"
+                                    v-model="employee.city"
                                     required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white"
                                 >
-                                    <option value="full_time">Full Time</option>
-                                    <option value="part_time">Part Time</option>
-                                </select>
-                            </div>
-
-                            <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Country <span class="text-red-500">*</span> </label>
-                                <select
-                                    v-model="employee.country_id"
-                                    required
-                                    :disabled="countriesLoading"
-                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                >
-                                    <option value="">Select a country</option>
-                                    <option v-for="country in countries" :key="country.id" :value="country.id" class="flex items-center space-x-3 py-2">
-                                        <div class="flex items-center space-x-3">
-                                            <img v-if="country.imageUrl" :src="country.imageUrl" :alt="country.name" class="w-6 h-4 rounded object-cover" />
-                                            <span>{{ country.name }}</span>
-                                        </div>
+                                    <option value="">Vælg en by</option>
+                                    <option v-for="city in danishCities" :key="city" :value="city">
+                                        {{ city }}
                                     </option>
                                 </select>
                             </div>
 
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Experience Certificate </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Postnummer <span class="text-red-500">*</span> </label>
+                                <select
+                                    v-model="employee.post_nummer"
+                                    required
+                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white"
+                                >
+                                    <option value="">Vælg postnummer</option>
+                                    <option v-for="postal in danishPostalCodes" :key="postal.code" :value="postal.code">
+                                        {{ postal.code }} - {{ postal.city }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-4">
+                                <label class="block text-lg font-semibold text-gray-800"> Brugernavn <span class="text-red-500">*</span> </label>
                                 <input
-                                    v-model="employee.experience_certificate"
+                                    v-model="employee.user_name"
                                     type="text"
+                                    required
                                     class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                                    placeholder="Experience certificate details"
+                                    placeholder="Vælg et brugernavn"
+                                />
+                            </div>
+
+                            <div class="space-y-4">
+                                <label class="block text-lg font-semibold text-gray-800"> Adgangskode <span class="text-red-500">*</span> </label>
+                                <input
+                                    v-model="employee.password"
+                                    type="password"
+                                    required
+                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                                    placeholder="Indtast din adgangskode"
                                 />
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Skills <span class="text-red-500">*</span> </label>
+                            <label class="block text-lg font-semibold text-gray-800"> Komplet Adresse <span class="text-red-500">*</span> </label>
+                            <textarea
+                                v-model="employee.address"
+                                required
+                                rows="3"
+                                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
+                                placeholder="Din komplette adresse"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Job Information -->
+                    <div class="space-y-8">
+                        <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
+                            <div class="w-3 h-10 bg-green-500 rounded-full"></div>
+                            <h2 class="text-3xl font-bold text-gray-900">Joboplysninger</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <label class="block text-lg font-semibold text-gray-800"> Jobtype <span class="text-red-500">*</span> </label>
+                                <select
+                                    v-model="employee.type_job"
+                                    required
+                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 appearance-none bg-white"
+                                >
+                                    <option value="full_time">Fuldtid</option>
+                                    <option value="part_time">Deltid</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-4">
+                                <label class="block text-lg font-semibold text-gray-800"> Erfaringsbevis </label>
+                                <input
+                                    v-model="employee.experience_certificate"
+                                    type="text"
+                                    class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
+                                    placeholder="Detaljer om erfaringsbevis"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <label class="block text-lg font-semibold text-gray-800"> Færdigheder <span class="text-red-500">*</span> </label>
                             <textarea
                                 v-model="employee.skills"
                                 required
                                 rows="4"
                                 class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
-                                placeholder="Describe your skills and expertise..."
+                                placeholder="Beskriv dine færdigheder og ekspertise..."
                             ></textarea>
                         </div>
                     </div>
@@ -234,7 +224,7 @@
                         <div class="flex items-center justify-between pb-6 border-b border-gray-200">
                             <div class="flex items-center space-x-4">
                                 <div class="w-3 h-10 bg-purple-500 rounded-full"></div>
-                                <h2 class="text-3xl font-bold text-gray-900">Languages</h2>
+                                <h2 class="text-3xl font-bold text-gray-900">Sprog</h2>
                             </div>
                             <button
                                 type="button"
@@ -242,7 +232,7 @@
                                 @click="addLanguage"
                             >
                                 <Icon name="clarity:add-line" class="h-6 w-6 mr-3" />
-                                Add Language
+                                Tilføj Sprog
                             </button>
                         </div>
 
@@ -252,7 +242,7 @@
                                     v-model="employee.languages[index]"
                                     class="flex-1 px-5 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white appearance-none"
                                 >
-                                    <option value="">Select a language</option>
+                                    <option value="">Vælg et sprog</option>
                                     <option v-for="lang in languagesList" :key="lang" :value="lang">
                                         {{ lang }}
                                     </option>
@@ -269,7 +259,7 @@
                         <div class="flex items-center justify-between pb-6 border-b border-gray-200">
                             <div class="flex items-center space-x-4">
                                 <div class="w-3 h-10 bg-yellow-500 rounded-full"></div>
-                                <h2 class="text-3xl font-bold text-gray-900">Preferred Jobs</h2>
+                                <h2 class="text-3xl font-bold text-gray-900">Foretrukne Job</h2>
                             </div>
                             <button
                                 type="button"
@@ -277,7 +267,7 @@
                                 @click="addFavoriteWork"
                             >
                                 <Icon name="clarity:add-line" class="h-6 w-6 mr-3" />
-                                Add Job Preference
+                                Tilføj Jobpræference
                             </button>
                         </div>
 
@@ -287,9 +277,9 @@
                                     v-model="employee.favorite_work[index]"
                                     class="flex-1 px-5 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all duration-200 bg-white appearance-none"
                                 >
-                                    <option value="">Select a job</option>
-                                    <option v-for="job in popularJobs" :key="job.id" :value="job.name">
-                                        {{ job.name }}
+                                    <option value="">Vælg et job</option>
+                                    <option v-for="job in danishJobs" :key="job" :value="job">
+                                        {{ job }}
                                     </option>
                                 </select>
                                 <button
@@ -308,7 +298,7 @@
                     <div class="space-y-8">
                         <div class="flex items-center space-x-4 pb-6 border-b border-gray-200">
                             <div class="w-3 h-10 bg-orange-500 rounded-full"></div>
-                            <h2 class="text-3xl font-bold text-gray-900">Documents & Files</h2>
+                            <h2 class="text-3xl font-bold text-gray-900">Dokumenter & Filer</h2>
                         </div>
 
                         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -321,8 +311,8 @@
                                         <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-red-200 transition-colors">
                                             <Icon name="mdi:file-pdf-box" class="h-8 w-8 text-red-500" />
                                         </div>
-                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Your CV</p>
-                                        <p class="text-sm text-gray-500">PDF, DOC, DOCX (Max 10MB)</p>
+                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Dit CV</p>
+                                        <p class="text-sm text-gray-500">PDF, DOC, DOCX (Maks 10MB)</p>
                                         <p v-if="employee.cv" class="text-green-600 font-semibold mt-3 text-sm">✓ {{ employee.cv.name }}</p>
                                     </label>
                                 </div>
@@ -330,15 +320,15 @@
 
                             <!-- Application Upload -->
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Application Document </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Ansøgningsdokument </label>
                                 <div class="border-3 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-green-400 hover:bg-green-50 transition-all duration-300 cursor-pointer group h-full">
                                     <input id="application-upload" type="file" accept=".pdf,.doc,.docx" class="hidden" @change="handleFileUpload($event, 'application')" />
                                     <label for="application-upload" class="cursor-pointer flex flex-col items-center justify-center h-full">
                                         <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
                                             <Icon name="mdi:file-document" class="h-8 w-8 text-green-500" />
                                         </div>
-                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Application</p>
-                                        <p class="text-sm text-gray-500">PDF, DOC, DOCX (Max 10MB)</p>
+                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Ansøgning</p>
+                                        <p class="text-sm text-gray-500">PDF, DOC, DOCX (Maks 10MB)</p>
                                         <p v-if="employee.application" class="text-green-600 font-semibold mt-3 text-sm">✓ {{ employee.application.name }}</p>
                                     </label>
                                 </div>
@@ -346,15 +336,15 @@
 
                             <!-- Image Upload -->
                             <div class="space-y-4">
-                                <label class="block text-lg font-semibold text-gray-800"> Profile Photo </label>
+                                <label class="block text-lg font-semibold text-gray-800"> Profilbillede </label>
                                 <div class="border-3 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group h-full">
                                     <input id="image-upload" type="file" accept="image/*" class="hidden" @change="handleFileUpload($event, 'image')" />
                                     <label for="image-upload" class="cursor-pointer flex flex-col items-center justify-center h-full">
                                         <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
                                             <Icon name="mdi:camera" class="h-8 w-8 text-blue-500" />
                                         </div>
-                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Photo</p>
-                                        <p class="text-sm text-gray-500">JPG, PNG, WEBP (Max 5MB)</p>
+                                        <p class="text-lg font-semibold text-gray-700 mb-2">Upload Billede</p>
+                                        <p class="text-sm text-gray-500">JPG, PNG, WEBP (Maks 5MB)</p>
                                         <p v-if="employee.image" class="text-green-600 font-semibold mt-3 text-sm">✓ {{ employee.image.name }}</p>
                                     </label>
                                 </div>
@@ -370,7 +360,7 @@
                             class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-2xl rounded-2xl hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center justify-center"
                         >
                             <Icon v-if="formLoading" name="eos-icons:three-dots-loading" class="h-7 w-7 mr-4" />
-                            <span>{{ formLoading ? 'Processing Registration...' : 'Complete Registration' }}</span>
+                            <span>{{ formLoading ? 'Behandler Registrering...' : 'Fuldfør Registrering' }}</span>
                         </button>
                     </div>
                 </form>
@@ -391,7 +381,7 @@ const employee = reactive({
     description: '',
     nationality: '',
     city: '',
-    country_id: '',
+    country_id: '', // سيتم إرساله فارغاً ولكن لن يظهر في الـ UI
     type_job: 'part_time',
     languages: [''],
     cv: null as File | null,
@@ -402,7 +392,7 @@ const employee = reactive({
     post_nummer: '',
     experience_certificate: '',
     favorite_work: [''],
-    password: '01062206359',
+    password: '',
     skills: '',
     key_code_id: '',
 });
@@ -412,92 +402,83 @@ const submitSuccess = ref(false);
 const submitError = ref('');
 const countriesLoading = ref(false);
 
-// قائمة الوظائف الشائعة حول العالم
-const popularJobs = ref([
-    { id: 1, name: 'Software Developer' },
-    { id: 2, name: 'Data Scientist' },
-    { id: 3, name: 'Project Manager' },
-    { id: 4, name: 'Marketing Specialist' },
-    { id: 5, name: 'Sales Representative' },
-    { id: 6, name: 'Graphic Designer' },
-    { id: 7, name: 'Accountant' },
-    { id: 8, name: 'HR Manager' },
-    { id: 9, name: 'Customer Service' },
-    { id: 10, name: 'Teacher' },
-    { id: 11, name: 'Nurse' },
-    { id: 12, name: 'Doctor' },
-    { id: 13, name: 'Engineer' },
-    { id: 14, name: 'Architect' },
-    { id: 15, name: 'Chef' },
-    { id: 16, name: 'Electrician' },
-    { id: 17, name: 'Plumber' },
-    { id: 18, name: 'Mechanic' },
-    { id: 19, name: 'Driver' },
-    { id: 20, name: 'Security Guard' },
-    { id: 21, name: 'Receptionist' },
-    { id: 22, name: 'Administrative Assistant' },
-    { id: 23, name: 'Financial Analyst' },
-    { id: 24, name: 'Web Developer' },
-    { id: 25, name: 'IT Support' },
-    { id: 26, name: 'Content Writer' },
-    { id: 27, name: 'Social Media Manager' },
-    { id: 28, name: 'Photographer' },
-    { id: 29, name: 'Videographer' },
-    { id: 30, name: 'Translator' },
-    { id: 31, name: 'Interpreter' },
-    { id: 32, name: 'Lawyer' },
-    { id: 33, name: 'Paralegal' },
-    { id: 34, name: 'Real Estate Agent' },
-    { id: 35, name: 'Insurance Agent' },
-    { id: 36, name: 'Bank Teller' },
-    { id: 37, name: 'Loan Officer' },
-    { id: 38, name: 'Pharmacist' },
-    { id: 39, name: 'Dental Hygienist' },
-    { id: 40, name: 'Physical Therapist' },
-    { id: 41, name: 'Occupational Therapist' },
-    { id: 42, name: 'Veterinarian' },
-    { id: 43, name: 'Zoologist' },
-    { id: 44, name: 'Biologist' },
-    { id: 45, name: 'Chemist' },
-    { id: 46, name: 'Physicist' },
-    { id: 47, name: 'Astronomer' },
-    { id: 48, name: 'Geologist' },
-    { id: 49, name: 'Meteorologist' },
-    { id: 50, name: 'Environmental Scientist' },
+// مدن الدنمارك
+const danishCities = ref([
+    'København',
+    'Aarhus',
+    'Odense',
+    'Aalborg',
+    'Esbjerg',
+    'Randers',
+    'Kolding',
+    'Horsens',
+    'Vejle',
+    'Roskilde',
+    'Herning',
+    'Hørsholm',
+    'Helsingør',
+    'Silkeborg',
+    'Næstved',
+    'Fredericia',
+    'Viborg',
+    'Køge',
+    'Holstebro',
+    'Taastrup'
+]);
+
+// الرموز البريدية الدنماركية
+const danishPostalCodes = ref([
+    { code: '1000', city: 'København K' },
+    { code: '1050', city: 'København K' },
+    { code: '1100', city: 'København K' },
+    { code: '1200', city: 'København K' },
+    { code: '1300', city: 'København K' },
+    { code: '1400', city: 'København K' },
+    { code: '1450', city: 'København K' },
+    { code: '1500', city: 'København K' },
+    { code: '1550', city: 'København K' },
+    { code: '1600', city: 'København V' },
+    { code: '1650', city: 'København V' },
+    { code: '1700', city: 'København V' },
+    { code: '1800', city: 'Frederiksberg C' },
+    { code: '2000', city: 'Frederiksberg' },
+    { code: '2100', city: 'København Ø' },
+    { code: '2200', city: 'København N' },
+    { code: '2300', city: 'København S' },
+    { code: '2400', city: 'København NV' },
+    { code: '2450', city: 'København SV' },
+    { code: '2500', city: 'Valby' }
+]);
+
+// الوظائف الدنماركية
+const danishJobs = ref([
+    'Lagermedarbjder',
+    'Rengøring',
+    'Andet'
 ]);
 
 // قائمة اللغات العالمية
 const languagesList = ref([
+    'Dansk',
     'English',
-    'Spanish',
-    'French',
-    'German',
-    'Chinese',
+    'Svenska',
+    'Norsk',
+    'Deutsch',
+    'Français',
+    'Español',
+    'Italiano',
     'Arabic',
+    'Chinese',
     'Russian',
-    'Portuguese',
-    'Japanese',
-    'Hindi',
-    'Italian',
-    'Dutch',
-    'Korean',
-    'Turkish',
     'Polish',
-    'Swedish',
-    'Norwegian',
-    'Danish',
-    'Finnish',
+    'Turkish',
+    'Hindi',
+    'Japanese',
+    'Korean',
+    'Portuguese',
+    'Dutch',
     'Greek',
-    'Hebrew',
-    'Thai',
-    'Vietnamese',
-    'Indonesian',
-    'Malay',
-    'Filipino',
-    'Urdu',
-    'Persian',
-    'Bengali',
-    'Punjabi',
+    'Hebrew'
 ]);
 
 // computed للحصول على قائمة الدول
@@ -561,30 +542,29 @@ function handleFileUpload(event: Event, type: 'cv' | 'image' | 'application') {
 }
 
 // Form submission
+// Form submission
 async function submitEmployee() {
     formLoading.value = true;
     submitError.value = '';
 
-    // التحقق من اختيار دولة
-    if (!employee.country_id) {
-        submitError.value = 'Please select a country';
-        formLoading.value = false;
-        return;
-    }
+    console.log('🚀 بدء عملية التسجيل...');
 
     // التحقق من اختيار key code
     if (!employee.key_code_id) {
-        submitError.value = 'Please select a key code country';
+        submitError.value = 'Vælg venligst et land for nøglekode';
         formLoading.value = false;
         return;
     }
 
     try {
+        console.log('🔐 جلب CSRF token...');
+        
         // أولاً: جهز CSRF token
         await useApiFetch('/sanctum/csrf-cookie', {
             method: 'GET',
             credentials: 'include',
         });
+        console.log('✅ CSRF token جلب بنجاح');
 
         // ثانياً: جهز FormData
         const formData = new FormData();
@@ -593,10 +573,10 @@ async function submitEmployee() {
         formData.append('name', employee.name);
         formData.append('email', employee.email);
         formData.append('address', employee.address);
-        formData.append('description', employee.description);
+        formData.append('description', employee.description || '');
         formData.append('nationality', employee.nationality);
         formData.append('city', employee.city);
-        formData.append('country_id', employee.country_id);
+        formData.append('country_id', '');
         formData.append('type_job', employee.type_job);
 
         // الحقول الجديدة
@@ -604,7 +584,7 @@ async function submitEmployee() {
         formData.append('phone', employee.phone);
         formData.append('post_nummer', employee.post_nummer);
         formData.append('experience_certificate', employee.experience_certificate || '');
-        formData.append('password', employee.password);
+        formData.append('password', employee.password || 'defaultPassword123');
 
         // الحقول الناقصة
         formData.append('skills', employee.skills);
@@ -628,62 +608,87 @@ async function submitEmployee() {
         if (employee.image) formData.append('image', employee.image);
         if (employee.application) formData.append('application', employee.application);
 
-        // ثالثاً: إرسال البيانات
+        console.log('📤 البيانات المرسلة:');
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                console.log(`   ${key}: [File] ${value.name}`);
+            } else {
+                console.log(`   ${key}: ${value}`);
+            }
+        }
+
+        console.log('🌐 إرسال الطلب إلى API باستخدام useApiFetch...');
+
+        // ثالثاً: إرسال البيانات باستخدام useApiFetch
         const { data, error } = await useApiFetch('/api/employee/store', {
             method: 'POST',
             body: formData,
             credentials: 'include',
             headers: {
-                Accept: 'application/json',
+                'Accept': 'application/json',
             },
         });
 
+        console.log('📨 Response from useApiFetch:', {
+            data: data.value,
+            error: error.value
+        });
+
+        if (error.value) {
+            console.error('❌ API Error:', error.value);
+            
+            // إذا كان الـ error فيه HTML
+            if (error.value.data && typeof error.value.data === 'string' && error.value.data.includes('<!DOCTYPE html>')) {
+                throw new Error('Serveren returnerede HTML i stedet for JSON. Tjek API endpoint.');
+            }
+            
+            throw new Error(error.value.data?.message || error.value.message || 'API fejl');
+        }
+
         if (data.value) {
-            // ✅ النجاح - إظهار Toast وإعادة تعيين النموذج
+            console.log('✅ API Success:', data.value);
+            
+            // ✅ النجاح - إظهار Toast
             useToast({
-                title: 'Success',
-                message: 'Employee registered successfully!',
+                title: 'Succes',
+                message: 'Medarbejder registreret succesfuldt!',
                 type: 'success',
-                duration: 5000,
+                duration: 3000,
             });
 
             submitSuccess.value = true;
 
-            // إعادة تعيين النموذج بعد 3 ثواني
+            // الانتقال إلى صفحة /auth بعد 2 ثانية
             setTimeout(() => {
-                resetForm();
-                submitSuccess.value = false;
-            }, 3000);
+                navigateTo('/auth');
+            }, 2000);
 
-        } else if (error.value) {
-            // ❌ الخطأ - إظهار Toast بالخطأ
-            useToast({
-                title: 'Error',
-                message: error.value.message || 'Failed to register employee',
-                type: 'error',
-                duration: 5000,
-            });
-            
-            submitError.value = error.value.message || 'Failed to register employee';
+        } else {
+            throw new Error('Intet data modtaget fra serveren');
         }
 
     } catch (err: any) {
-        console.error('❌ Submission error:', err);
+        console.error('💥 خطأ في التقديم:', err);
         
+        let errorMessage = 'Noget gik galt. Prøv venligst igen.';
+        
+        if (err.message) {
+            errorMessage = err.message;
+        }
+
         // ❌ خطأ في الشبكة أو الخادم
         useToast({
-            title: 'Error',
-            message: err.data?.message || err.message || 'Something went wrong. Please try again.',
+            title: 'Fejl',
+            message: errorMessage,
             type: 'error',
             duration: 5000,
         });
         
-        submitError.value = err.data?.message || err.message || 'Something went wrong. Please try again.';
+        submitError.value = errorMessage;
     } finally {
         formLoading.value = false;
     }
 }
-
 // دالة لإعادة تعيين النموذج
 function resetForm() {
     Object.assign(employee, {
@@ -704,7 +709,7 @@ function resetForm() {
         post_nummer: '',
         experience_certificate: '',
         favorite_work: [''],
-        password: '01062206359',
+        password: '',
         skills: '',
         key_code_id: '',
     });

@@ -6,7 +6,7 @@
                 <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <Icon name="mdi:office-building-plus" class="h-12 w-12 text-white" />
                 </div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Company Registration</h1>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Company</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">Register your company and join our network of partners</p>
             </div>
 
