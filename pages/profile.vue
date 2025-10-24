@@ -679,7 +679,7 @@ function checkAuth() {
     
     if (!tokenCookie.value || userTypeCookie.value !== 'employee') {
         console.log('🚫 Not authenticated, redirecting to login...')
-        navigateTo('/login')
+        navigateTo('/auth')
         return false
     }
     
@@ -990,7 +990,7 @@ function logout() {
     console.log('🍪 Cookies cleared, redirecting to login...')
     
     // الانتقال لصفحة login
-    navigateTo('/login')
+    navigateTo('/auth')
 }
 
 // دالة تبديل وضع التعديل
