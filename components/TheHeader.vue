@@ -92,8 +92,15 @@ function toggleMobileMenu() {
     mobileMenuOpen.value = !mobileMenuOpen.value;
 }
 
-// دالة للتنقل إلى السكشن - معدلة للذهاب إلى موقع محدد
+// دالة للتنقل إلى السكشن - معدلة
 function scrollToSection(sectionId) {
+    // ✅ التعديل هنا: إذا كان sectionId هو #contact افتح الـ modal
+    if (sectionId === '#contact') {
+        openContactModal();
+        mobileMenuOpen.value = false;
+        return;
+    }
+    
     // إذا كان sectionId هو #services (partnere) نذهب إلى scrollY 1080
     if (sectionId === '#services') {
         if (route.path !== '/') {
@@ -229,7 +236,7 @@ watch(
                 <!-- الأزرار الهامة - سطح المكتب -->
                 <div class="hidden lg:flex items-center space-x-2">
                     <!-- زر الاتصال -->
-                 
+                    
 
                     <!-- زر Login/Profile -->
                     <template v-if="isLoggedIn">
