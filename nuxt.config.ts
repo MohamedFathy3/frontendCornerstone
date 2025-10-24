@@ -48,9 +48,7 @@ export default defineNuxtConfig({
             proxy: 'http://127.0.0.1:8001/**',
             
         },
-         '/backend/api/employee/profile/update/**': {
-      proxy: 'https://job.professionalacademyedu.com/api/employee/profile/update/**',
-    },
+      
         '/get-geoip/**': {
             proxy: 'http://127.0.0.1:8001',
         },

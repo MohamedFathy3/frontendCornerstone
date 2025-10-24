@@ -71,6 +71,7 @@ const item = ref({
     position: null,
     active: true,
     showHome: true,
+    list: [],
 });
 const rules = ref({
     name: { required },
@@ -93,6 +94,7 @@ async function resetItemValues() {
     item.value.position = null;
     item.value.active = false;
     item.value.showHome = false;
+    item.value.list = [];
 }
 
 async function closeModal() {
@@ -314,8 +316,8 @@ async function handleModalSubmit() {
                             <span :class="[item.showHome ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="item.showHome ? 'Visible at Home' : 'Hidden from Home'"></span>
                         </label>
                     </div>
-                    <div v-if="item.list.length > 0" class="lg:col-span-12 border-t pt-5">
-                        <div class="form-label">List Items</div>
+<div v-if="item.list.length > 0" class="lg:col-span-12 border-t pt-5">
+                            <div class="form-label">List Items</div>
                         <ul class="space-y-5">
                             <template v-for="(listItem, i) in item.list" :key="i">
                                 <li class="grid grid-cols-12 gap-5 p-5 border rounded-lg items-start">

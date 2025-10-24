@@ -33,6 +33,10 @@ const serverParams = ref<ServerParams>({
     search: null,
 });
 
+// Modal
+const showModal = ref(false);
+const selectedCompany = ref<Company | null>(null);
+
 // استخدام useAsyncData للـ data fetching
 const {
     data: companiesData,
@@ -69,15 +73,20 @@ const resetSearch = () => {
     serverParams.value.page = 1;
 };
 
-// Delete Company
+// فتح المودال لعرض التفاصيل
+function viewCompany(company: Company) {
+    selectedCompany.value = company;
+    showModal.value = true;
+}
+
+// Delete Company — إرسال id في params بدل body
 async function deleteItem(id: number) {
     const confirmed = confirm('Are you sure you want to delete this company?');
     if (!confirmed) return;
 
     try {
-        const { data, error } = await useApiFetch('/api/company', {
+        const { data, error } = await useApiFetch(`/api/company/${id}`, {
             method: 'DELETE',
-            body: { items: [id] },
         });
 
         if (data.value) {
@@ -128,10 +137,11 @@ watch(
 
         <!-- Search Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 bg-gray-50 rounded-lg">
-            <!-- Search -->
-            <FormInputField v-model="serverParams.search" class="lg:col-span-8" placeholder="Search by company name, responsible person, email, or country..." />
-
-            <!-- Actions -->
+            <FormInputField
+                v-model="serverParams.search"
+                class="lg:col-span-8"
+                placeholder="Search by company name, responsible person, email, or country..."
+            />
             <div class="lg:col-span-4 flex gap-2">
                 <button class="btn btn-dark flex-1" @click="search">
                     <Icon name="solar:magnifer-linear" class="w-4 h-4 mr-2" />
@@ -151,7 +161,6 @@ watch(
                     <tr class="text-sm uppercase bg-gray-50">
                         <th class="p-4">Company</th>
                         <th class="p-4">Contact Info</th>
-                        <th class="p-4">Location</th>
                         <th class="p-4">Added Date</th>
                         <th class="p-4">Actions</th>
                     </tr>
@@ -160,7 +169,6 @@ watch(
                     <template v-if="!pending">
                         <template v-if="companiesData && companiesData.data && companiesData.data.length > 0">
                             <tr v-for="company in companiesData.data" :key="company.id" class="text-sm border-b hover:bg-gray-50">
-                                <!-- Company Info -->
                                 <td class="p-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -173,8 +181,6 @@ watch(
                                         </div>
                                     </div>
                                 </td>
-
-                                <!-- Contact Info -->
                                 <td class="p-4">
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2">
@@ -187,30 +193,13 @@ watch(
                                         </div>
                                     </div>
                                 </td>
-
-                                <!-- Location Info -->
-                                <td class="p-4">
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-2">
-                                            <Icon name="solar:point-on-map-linear" class="w-4 h-4 text-gray-400" />
-                                            <span class="text-gray-600">{{ company.city }}, {{ company.country }}</span>
-                                        </div>
-                                        <div v-if="company.address" class="text-xs text-gray-500">
-                                            {{ company.address }}
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <!-- Date -->
-                                <td class="p-4">
-                                    <div class="text-gray-600 text-sm">
-                                        {{ formatDate(company.created_at) }}
-                                    </div>
-                                </td>
-
-                                <!-- Actions -->
+                                <td class="p-4">{{ formatDate(company.created_at) }}</td>
                                 <td class="p-4">
                                     <div class="flex items-center gap-2">
+                                        <button class="btn btn-sm btn-outline-primary flex items-center gap-2" @click="viewCompany(company)">
+                                            <Icon name="solar:eye-linear" class="w-4 h-4" />
+                                            View
+                                        </button>
                                         <button class="btn btn-sm btn-outline-danger flex items-center gap-2" @click="deleteItem(company.id)">
                                             <Icon name="solar:trash-bin-minimalistic-linear" class="w-4 h-4" />
                                             Delete
@@ -221,54 +210,34 @@ watch(
                         </template>
                         <template v-else>
                             <tr>
-                                <td colspan="5">
+                                <td colspan="4">
                                     <div class="text-center py-12 text-gray-500">
                                         <Icon name="solar:buildings-2-linear" class="w-16 h-16 mx-auto mb-4 opacity-50" />
                                         <div class="text-lg font-medium">No Companies Found</div>
-                                        <div class="text-sm">No companies match your search criteria</div>
                                     </div>
                                 </td>
                             </tr>
                         </template>
                     </template>
-                    <template v-else>
-                        <!-- Skeleton Loading -->
-                        <tr v-for="i in 5" :key="i">
-                            <td v-for="j in 5" :key="j" class="p-4">
-                                <div class="animate-pulse bg-gray-200 h-6 rounded"></div>
-                            </td>
-                        </tr>
-                    </template>
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div v-if="!pending && companiesData && companiesData.data && companiesData.data.length > 0" class="flex items-center justify-between gap-4">
-            <div class="text-sm text-gray-600">Showing {{ companiesData.from }} to {{ companiesData.to }} of {{ companiesData.total }} companies</div>
-
-            <div class="flex items-center gap-2">
-                <button :disabled="!companiesData.prev_page_url" class="btn btn-sm btn-outline-secondary flex items-center gap-2" @click="changePage(companiesData.current_page - 1)">
-                    <Icon name="solar:alt-arrow-left-linear" class="w-4 h-4" />
-                    Previous
-                </button>
-
-                <div class="flex items-center gap-1">
-                    <button
-                        v-for="(link, index) in companiesData.links"
-                        :key="index"
-                        :class="['btn btn-sm', link.active ? 'btn-primary' : 'btn-outline-secondary', index === 0 || index === companiesData.links.length - 1 ? 'px-3' : 'px-4']"
-                        :disabled="!link.url || link.active"
-                        @click="changePage(link.label)"
-                    >
-                        <span v-html="link.label"></span>
-                    </button>
+        <!-- Modal -->
+        <div
+            v-if="showModal"
+            class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        >
+            <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+                <h2 class="text-lg font-semibold mb-4">Company Details</h2>
+                <p><strong>Name:</strong> {{ selectedCompany?.name }}</p>
+                <p><strong>Responsible:</strong> {{ selectedCompany?.responsible_name }}</p>
+                <p><strong>Email:</strong> {{ selectedCompany?.email }}</p>
+                <p><strong>Phone:</strong> {{ selectedCompany?.phone }}</p>
+                <p><strong>Comment:</strong> {{ selectedCompany?.address }}</p>
+                <div class="mt-4 text-right">
+                    <button @click="showModal = false" class="btn btn-secondary">Close</button>
                 </div>
-
-                <button :disabled="!companiesData.next_page_url" class="btn btn-sm btn-outline-secondary flex items-center gap-2" @click="changePage(companiesData.current_page + 1)">
-                    Next
-                    <Icon name="solar:alt-arrow-right-linear" class="w-4 h-4" />
-                </button>
             </div>
         </div>
     </div>
