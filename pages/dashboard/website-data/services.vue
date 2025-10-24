@@ -303,7 +303,7 @@ async function handleModalSubmit() {
                     <FormInputField v-model="item.slug" :disabled="editMode" :errors="v$.slug.$errors" :readonly="editMode" class="lg:col-span-12" label="Slug" name="slug" placeholder="Slug" />
                     <FormInputField v-model="item.shortDescription" :errors="v$.shortDescription.$errors" class="lg:col-span-12" label="Short Description" name="name" placeholder="Short Description" type="textarea" />
                     <FormInputField v-model="item.description" :errors="v$.description.$errors" class="lg:col-span-12" label="Description" name="short-description" placeholder="Description" type="textarea" />
-                    <FormInputField v-model="item.position" :errors="v$.position.$errors" class="lg:col-span-12" label="Position" name="description" placeholder="Position" />
+                    <FormInputField v-model="item.position" :errors="v$.position.$errors" class="lg:col-span-12" label="Position" name="description"   type="number" placeholder="Position" />
                     <div class="flex items-center lg:col-span-6" data-tw-merge>
                         <input id="active-switch" v-model="item.active" class="form-checkbox-input" type="checkbox" />
                         <label class="cursor-pointer ml-4 text-sm font-medium capitalize" for="active-switch">
