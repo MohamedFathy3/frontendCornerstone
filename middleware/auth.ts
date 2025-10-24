@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const userTypeCookie = useCookie('user_type')
   
   // إذا كان المستخدم عامل login ومحاول يدخل على login page
-  if (tokenCookie.value && to.path === '/auth' && to.path === '/empley' || to.path === '/Profile') {
+  if (tokenCookie.value && to.path === '/auth') {
     // ابعده للصفحة الرئيسية أو البروفايل
     return navigateTo(userTypeCookie.value === 'employee' ? '/profile' : '/')
   }

@@ -113,6 +113,17 @@
                                 />
                             </div>
 
+ <div class="space-y-4">
+                            <label class="block text-lg font-semibold text-gray-800"> Komplet Adresse <span class="text-red-500">*</span> </label>
+                            <textarea
+                                v-model="employee.address"
+                                required
+                                rows="1"
+                                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
+                                placeholder="Din komplette adresse"
+                            ></textarea>
+                        </div>
+
                             <div class="space-y-4">
                                 <label class="block text-lg font-semibold text-gray-800"> By <span class="text-red-500">*</span> </label>
                                 <select
@@ -164,16 +175,7 @@
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <label class="block text-lg font-semibold text-gray-800"> Komplet Adresse <span class="text-red-500">*</span> </label>
-                            <textarea
-                                v-model="employee.address"
-                                required
-                                rows="3"
-                                class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
-                                placeholder="Din komplette adresse"
-                            ></textarea>
-                        </div>
+                    
                     </div>
 
                     <!-- Job Information -->

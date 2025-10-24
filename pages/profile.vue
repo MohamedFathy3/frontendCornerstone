@@ -9,7 +9,9 @@
                             v-if="employeeData?.image" 
                             :src="employeeData.image" 
                             :alt="employeeData.name"
+                            :key="employeeData.image"
                             class="w-full h-full rounded-full object-cover"
+                            @error="employeeData.image = null"
                         />
                         <Icon v-else name="mdi:account" class="h-16 w-16 text-white" />
                     </div>
@@ -80,6 +82,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                            <!-- جميع الحقول الشخصية هنا (نفس الكود السابق) -->
                             <div class="space-y-4">
                                 <label class="block text-lg font-semibold text-gray-800"> Fulde Navn <span class="text-red-500">*</span> </label>
                                 <input
@@ -780,31 +783,7 @@ async function fetchEmployeeData() {
     }
 }
 
-// دالة التحقق من صحة الـ response
-function isValidJsonResponse(data: any): boolean {
-    console.log('🔍 Checking if response is valid JSON...')
-    console.log('🔍 Response type:', typeof data)
-    console.log('🔍 Response data:', data)
-    
-    if (!data) {
-        console.log('❌ Response is empty')
-        return false
-    }
-    
-    if (typeof data === 'string' && data.includes('<!DOCTYPE html>')) {
-        console.log('❌ Response is HTML page')
-        return false
-    }
-    
-    if (typeof data === 'object') {
-        console.log('✅ Response is valid object')
-        return true
-    }
-    
-    console.log('❓ Unknown response type')
-    return false
-}
-
+// دالة التحديث المحسنة
 async function updateProfile() {
     console.log('🔄 Starting profile update...')
     
@@ -844,7 +823,6 @@ async function updateProfile() {
             formData.append('password', editForm.password)
         }
 
-        // ✅ إصلاح: إرسال المصفوفات بشكل صحيح
         // تنظيف اللغات من القيم الفارغة
         const cleanLanguages = editForm.languages.filter(lang => lang && lang.trim())
         cleanLanguages.forEach((lang, index) => {
@@ -862,14 +840,9 @@ async function updateProfile() {
         if (editForm.image) formData.append('image', editForm.image)
         if (editForm.application) formData.append('application', editForm.application)
 
-        // ✅ Debug: طباعة البيانات المرسلة
         console.log('📤 البيانات المرسلة:')
         console.log('🔹 اللغات:', cleanLanguages)
         console.log('🔹 العمل المفضل:', cleanFavoriteWork)
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`📝 ${key}:`, value)
-        }
 
         const { data, error } = await useApiFetch(`/api/employee/profile/update/${employeeId}`, {
             method: 'POST',
@@ -888,26 +861,22 @@ async function updateProfile() {
         console.log('🔍 Response data analysis:', responseData)
 
         if (responseData && responseData.result === 'Success') {
-            // ✅ إصلاح: تحديث البيانات المحلية بشكل صحيح
+            // تحديث فوري للـ UI
             if (employeeData.value && responseData.data) {
-                // تحديث كل الحقول بما فيها المصفوفات
-                employeeData.value = {
-                    ...employeeData.value,
-                    ...responseData.data,
-                    // تأكد من تحديث المصفوفات
-                    languages: cleanLanguages.length > 0 ? cleanLanguages : [''],
-                    favorite_work: cleanFavoriteWork.length > 0 ? cleanFavoriteWork : ['']
+                // تحديث كل الحقول
+                Object.assign(employeeData.value, responseData.data)
+                
+                // تحديث خاص للصورة
+                if (responseData.data.image) {
+                    employeeData.value.image = responseData.data.image + '?t=' + new Date().getTime()
                 }
+                
+                // تحديث المصفوفات
+                employeeData.value.languages = cleanLanguages
+                employeeData.value.favorite_work = cleanFavoriteWork
             }
 
-            // ✅ إصلاح: تحديث نموذج التحرير أيضاً
-            Object.assign(editForm, {
-                languages: cleanLanguages.length > 0 ? [...cleanLanguages] : [''],
-                favorite_work: cleanFavoriteWork.length > 0 ? [...cleanFavoriteWork] : ['']
-            })
-
-            console.log('✅ Employee data updated locally:', employeeData.value)
-
+            // إظهار نجاح
             useToast({
                 title: 'Succes',
                 message: responseData.message || 'Profil opdateret succesfuldt!',
@@ -915,21 +884,23 @@ async function updateProfile() {
                 duration: 3000,
             })
 
+            // إغلاق وضع التعديل فوراً
             isEditMode.value = false
-            console.log('✅ Profile updated successfully, edit mode closed')
             
-        } else if (responseData && responseData.message) {
-            throw new Error(responseData.message)
+            // إعادة تحميل البيانات بعد ثانية علشان الملفات
+            setTimeout(() => {
+                fetchEmployeeData()
+            }, 1500)
+            
         } else {
-            throw new Error('Uventet svar fra serveren')
+            throw new Error(responseData?.message || 'Uventet svar fra serveren')
         }
 
     } catch (err: any) {
         console.error('💥 خطأ في التحديث:', err)
-        
         useToast({
             title: 'Fejl',
-            message: err.message || err.data?.message || 'Noget gik galt. Prøv venligst igen.',
+            message: err.message || 'Noget gik galt. Prøv venligst igen.',
             type: 'error',
             duration: 5000,
         })
@@ -968,7 +939,7 @@ function removeFavoriteWork(index: number) {
     }
 }
 
-// رفع الملفات
+// رفع الملفات - معدلة
 function handleFileUpload(event: Event, type: 'cv' | 'image' | 'application') {
     console.log(`📁 Handling file upload for: ${type}`)
     const input = event.target as HTMLInputElement
@@ -981,6 +952,17 @@ function handleFileUpload(event: Event, type: 'cv' | 'image' | 'application') {
             console.log('📄 CV file set:', editForm.cv)
         } else if (type === 'image') {
             editForm.image = file
+            
+            // معاينة الصورة فوراً قبل الرفع
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                if (employeeData.value && e.target?.result) {
+                    employeeData.value.image = e.target.result as string
+                    console.log('🖼️ Image preview updated instantly')
+                }
+            }
+            reader.readAsDataURL(file)
+            
             console.log('🖼️ Image file set:', editForm.image)
         } else if (type === 'application') {
             editForm.application = file
@@ -1019,7 +1001,7 @@ function toggleEditMode() {
     if (isEditMode.value && employeeData.value) {
         console.log('📝 Entering edit mode, filling form...')
         
-        // ✅ إصلاح: تعبئة المصفوفات بشكل صحيح
+        // تعبئة المصفوفات بشكل صحيح
         const currentLanguages = Array.isArray(employeeData.value.languages) 
             ? employeeData.value.languages.filter((lang: string) => lang && lang.trim())
             : employeeData.value.languages 
@@ -1068,11 +1050,6 @@ function formatDate(dateString: string | undefined) {
         day: 'numeric'
     })
 }
-
-// middleware للصفحة
-definePageMeta({
-    middleware: 'auth'
-})
 
 // جلب البيانات عند تحميل الصفحة
 onMounted(async () => {

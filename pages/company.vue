@@ -163,7 +163,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 // Company data structure based on your API fields
 const company = reactive({
@@ -181,6 +180,21 @@ const formLoading = ref(false);
 const submitSuccess = ref(false);
 const submitError = ref('');
 
+// دالة لإعادة تعيين النموذج بالكامل
+function resetForm() {
+    Object.assign(company, {
+        name: '',
+        responsible_name: '',
+        email: '',
+        phone: '',
+        country_id: '1',
+        city: '',
+        address: '',
+        image: null,
+    });
+    submitError.value = '';
+}
+
 // File upload handler
 function handleFileUpload(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -189,98 +203,188 @@ function handleFileUpload(event: Event) {
     }
 }
 
-// دالة لإعادة تعيين النموذج
-function resetForm() {
-    Object.assign(company, {
-        name: '',
-        responsible_name: '',
-        email: '',
-        phone: '',
-        country_id: '',
-        city: '',
-        address: '',
-        image: null,
-    });
+// دالة لتنظيف ومعالجة الأخطاء القادمة من الباكند
+function handleBackendError(error: any): string {
+    console.log('🔍 Backend error details:', error);
+    
+    if (!error) {
+        return 'Ukendt fejl opstod. Prøv venligst igen.';
+    }
+
+    // إذا كان الخطأ فيه data (من useApiFetch)
+    if (error.data) {
+        const errorData = error.data;
+        
+        // Laravel validation errors
+        if (errorData.errors) {
+            const firstError = Object.values(errorData.errors)[0];
+            if (Array.isArray(firstError) && firstError.length > 0) {
+                return firstError[0];
+            }
+        }
+        
+        // Laravel error message
+        if (errorData.message) {
+            return errorData.message;
+        }
+        
+        // General error
+        if (errorData.error) {
+            return errorData.error;
+        }
+    }
+    
+    // إذا كان الخطأ فيه message مباشرة
+    if (error.message) {
+        // تجنب عرض الأخطاء التقنية للمستخدم
+        const technicalErrors = [
+            'SQLSTATE',
+            'connection',
+            'database',
+            'server',
+            'timeout',
+            'network'
+        ];
+        
+        const lowerMessage = error.message.toLowerCase();
+        if (technicalErrors.some(techError => lowerMessage.includes(techError))) {
+            return 'Server fejl. Prøv venligst igen om et øjeblik.';
+        }
+        
+        return error.message;
+    }
+    
+    // خطأ افتراضي
+    return 'Noget gik galt. Kontroller dine oplysninger og prøv igen.';
 }
 
-// Form submission
+// دالة لعرض رسائل الخطأ بشكل مناسب للمستخدم
+function showUserFriendlyError(error: any) {
+    const userMessage = handleBackendError(error);
+    submitError.value = userMessage;
+    
+    // ✅ إظهار toast error
+    useToast({ 
+        title: 'Fejl', 
+        message: userMessage, 
+        type: 'error', 
+        duration: 5000 
+    });
+    
+    // إخفاء الخطأ تلقائياً بعد 10 ثواني
+    setTimeout(() => {
+        submitError.value = '';
+    }, 10000);
+}
+
+// Form submission - معدلة بالكامل
 async function submitCompany() {
+    // ✅ منع إرسال متعدد
+    if (formLoading.value) {
+        console.log('⏳ Form is already submitting, skipping...');
+        return;
+    }
+
     formLoading.value = true;
     submitError.value = '';
 
     try {
-        // أولاً: جهز CSRF token
-        await useApiFetch('/sanctum/csrf-cookie', {
-            method: 'GET',
-            credentials: 'include',
-        });
+        console.log('🚀 Starting company registration...');
+        console.log('📝 Form data:', { ...company });
 
-        // ثانياً: جهز FormData
+        // ✅ إنشاء FormData جديد في كل مرة
         const formData = new FormData();
 
-        formData.append('name', company.name);
-        formData.append('responsible_name', company.responsible_name);
-        formData.append('email', company.email);
-        formData.append('phone', company.phone);
+        // ✅ إضافة الحقول الأساسية
+        formData.append('name', company.name.trim());
+        formData.append('responsible_name', company.responsible_name.trim());
+        formData.append('email', company.email.trim());
+        formData.append('phone', company.phone.trim());
         formData.append('country_id', company.country_id);
-        formData.append('city', company.city);
-        formData.append('address', company.address);
+        formData.append('city', company.city.trim());
+        formData.append('address', company.address.trim());
 
-        if (company.image) formData.append('image', company.image);
+        // ✅ إضافة الصورة إذا كانت موجودة
+        if (company.image) {
+            formData.append('image', company.image);
+            console.log('🖼️ Image attached:', company.image.name);
+        }
 
-        // ثالثاً: إرسال البيانات
+        // ✅ Debug: طباعة محتويات FormData
+        console.log('📤 FormData contents:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`   ${key}:`, value);
+        }
+
+        // ✅ إرسال البيانات مباشرة بدون CSRF token (لأن useApiFetch بتهتم بيها)
         const { data, error } = await useApiFetch('/api/company/store', {
             method: 'POST',
             body: formData,
-            credentials: 'include',
         });
 
+        console.log('📦 API Response - data:', data.value);
+        console.log('❌ API Response - error:', error.value);
+
+        if (error.value) {
+            console.error('🚨 API Error:', error.value);
+            throw error.value;
+        }
+
         if (data.value) {
-            // ✅ النجاح - إظهار Toast وإعادة تعيين النموذج
-            useToast({
-                title: 'Success',
-                message: 'Company registered successfully!',
-                type: 'success',
-                duration: 5000,
-            });
-
+            console.log('✅ Company registered successfully:', data.value);
+            
+            // ✅ النجاح - إظهار رسالة النجاح
             submitSuccess.value = true;
-
-            // إعادة تعيين النموذج بعد 3 ثواني
-            setTimeout(() => {
-                resetForm();
-                submitSuccess.value = false;
-            }, 3000);
-
-        } else if (error.value) {
-            // ❌ الخطأ - إظهار Toast بالخطأ
-            useToast({
-                title: 'Error',
-                message: error.value.message || 'Failed to register company',
-                type: 'error',
-                duration: 5000,
+            
+            // ✅ إظهار toast success
+            useToast({ 
+                title: 'Succes', 
+                message: 'Virksomheden blev registreret med succes!', 
+                type: 'success', 
+                duration: 5000 
             });
             
-            submitError.value = error.value.message || 'Failed to register company';
+            // ✅ إعادة تعيين النموذج بالكامل
+            resetForm();
+            
+            // ✅ إخفاء رسالة النجاح بعد 5 ثواني
+            setTimeout(() => {
+                submitSuccess.value = false;
+            }, 5000);
+
+        } else {
+            throw new Error('Ingen data modtaget fra serveren');
         }
 
     } catch (err: any) {
-        console.error('Submission error:', err);
+        console.error('💥 Submission error:', err);
         
-        // ❌ خطأ في الشبكة أو الخادم
-        useToast({
-            title: 'Error',
-            message: err.data?.message || err.message || 'Something went wrong. Please try again.',
-            type: 'error',
-            duration: 5000,
-        });
+        // ✅ معالجة الخطأ وعرض رسالة مناسبة للمستخدم
+        showUserFriendlyError(err);
         
-        submitError.value = err.data?.message || err.message || 'Something went wrong. Please try again.';
     } finally {
         formLoading.value = false;
+        console.log('🏁 Form submission completed');
     }
 }
+
+// ✅ منع إعادة إرسال النموذج بالخطأ
+let lastSubmissionTime = 0;
+const SUBMISSION_COOLDOWN = 3000; // 3 ثواني
+
+// إضافة حماية إضافية
+watch(formLoading, (newVal) => {
+    if (newVal) {
+        lastSubmissionTime = Date.now();
+    }
+});
+
+// ✅ تأكد من إعادة تعيين النموذج عند ترك الصفحة
+onBeforeUnmount(() => {
+    resetForm();
+});
 </script>
+
 
 <style scoped>
 /* Enhanced animations */
@@ -332,5 +436,11 @@ input[type='file'] + label {
 
 input[type='file'] + label:hover {
     transform: scale(1.02);
+}
+
+/* Loading state for form */
+.form-loading {
+    pointer-events: none;
+    opacity: 0.7;
 }
 </style>
