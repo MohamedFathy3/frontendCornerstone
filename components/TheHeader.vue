@@ -3,29 +3,10 @@ import { email, helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 const headerMenu = ref([
-    { name: 'Hjem', link: '/', icon: 'ph:house-line-light', subMenus: [] },
-    { name: 'Om Os', link: '/about', icon: 'ph:info-light', subMenus: [] },
-    {
-        name: 'Services',
-        link: '/services',
-        icon: 'ph:grid-four-light',
-        subMenus: [
-            {
-                name: 'Konsolidering Service',
-                link: '/services/consolidation-service',
-                icon: 'ph:shipping-container-light',
-            },
-            { name: 'Søfragt', link: '/services/ocean-freight', icon: 'fluent:vehicle-ship-16-regular' },
-            { name: 'Luftfragt', link: '/services/air-freight', icon: 'iconoir:airplane' },
-            { name: 'Cargo Forsikring', link: '/services/cargo-insurance', icon: 'icon-park-outline:protect' },
-            { name: 'Toldformidling', link: '/services/customs-brokerage', icon: 'guidance:customs' },
-            {
-                name: 'Bonded Lager',
-                link: '/services/bonded-warehousing',
-                icon: 'material-symbols:warehouse-outline-rounded',
-            },
-        ],
-    },
+    { name: 'Hjem', link: '/', icon: 'ph:house-line-light' },
+    { name: 'Om Os', link: '/about', icon: 'ph:info-light' },
+    { name: 'partnere', link: '#services', icon: 'ph:grid-four-light' },
+    { name: 'Kontakt', link: '#contact', icon: 'ph:phone-light' },
 ]);
 
 const contactButton = useSettingValue('header_button');
@@ -103,18 +84,55 @@ async function sendMessage() {
 
 const route = useRoute();
 
-const isMenuOpen = ref(false);
-
-function desktopDropDownMenu() {
-    isMenuOpen.value = !isMenuOpen.value;
-}
-
 // إضافة متغير للتحكم في قائمة الهاتف
 const mobileMenuOpen = ref(false);
 
 // دالة لفتح/إغلاق قائمة الهاتف
 function toggleMobileMenu() {
     mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
+// دالة للتنقل إلى السكشن - معدلة للذهاب إلى موقع محدد
+function scrollToSection(sectionId) {
+    // إذا كان sectionId هو #services (partnere) نذهب إلى scrollY 1080
+    if (sectionId === '#services') {
+        if (route.path !== '/') {
+            // إذا لم نكن في الصفحة الرئيسية، انتقل إلى الصفحة الرئيسية أولاً
+            navigateTo('/');
+            // بعد الانتظار قليلاً، انتقل إلى الموقع المحدد
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 1080,
+                    behavior: 'smooth'
+                });
+            }, 500);
+        } else {
+            // إذا كنا في الصفحة الرئيسية، انتقل مباشرة إلى الموقع المحدد
+            window.scrollTo({
+                top: 1080,
+                behavior: 'smooth'
+            });
+        }
+    } else {
+        // للروابط الأخرى، استخدم السلوك العادي
+        if (route.path !== '/') {
+            navigateTo('/');
+            setTimeout(() => {
+                const element = document.getElementById(sectionId.replace('#', ''));
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 500);
+        } else {
+            const element = document.getElementById(sectionId.replace('#', ''));
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }
+    
+    // أغلق القائمة على الهاتف
+    mobileMenuOpen.value = false;
 }
 
 // حالة المستخدم من الكوكيز
@@ -156,7 +174,6 @@ onMounted(() => {
 watch(
     () => route.path,
     () => {
-        isMenuOpen.value = false;
         mobileMenuOpen.value = false;
     },
 );
@@ -197,55 +214,22 @@ watch(
                 <!-- قائمة سطح المكتب - للشاشات المتوسطة والكبيرة -->
                 <ul class="hidden lg:flex items-center gap-4 text-[14px] xl:text-[16px]">
                     <template v-for="item in headerMenu" :key="item.link">
-                        <li v-if="item.subMenus.length === 0" class="group relative">
+                        <li v-if="item.link.startsWith('#')" class="group relative">
+                            <button class="relative overflow-hidden flex items-center px-4 py-8 cursor-pointer" @click="scrollToSection(item.link)">
+                                <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
+                                <span class="z-20 font-semibold">{{ item.name }}</span>
+                                <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
+                            </button>
+                        </li>
+                        
+                        <li v-else class="group relative">
                             <NuxtLink :to="item.link" class="relative overflow-hidden flex items-center px-4 py-8">
                                 <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
                                 <span class="z-20 font-semibold">{{ item.name }}</span>
                                 <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
                             </NuxtLink>
                         </li>
-
-                        <HeadlessMenu v-else as="li" class="relative inline-block text-left">
-                            <div>
-                                <HeadlessMenuButton @click="desktopDropDownMenu">
-                                    <div class="group relative overflow-hidden flex items-center px-4 py-8">
-                                        <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
-                                        <span class="z-20 font-semibold">{{ item.name }}</span>
-                                        <Icon :class="[isMenuOpen && 'rotate-90', 'z-20 ml-2 h-6 w-6 text-slate-600 ease-in-out duration-300']" name="ion:md-arrow-dropdown" />
-                                        <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
-                                    </div>
-                                </HeadlessMenuButton>
-                            </div>
-
-                            <TransitionExpand>
-                                <div v-show="isMenuOpen">
-                                    <HeadlessMenuItems class="absolute right-0 mt-2 p-1.5 w-64 origin-top-right divide-y rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none" static>
-                                        <div class="p-1.5">
-                                            <template v-for="subItem in item.subMenus" :key="subItem.link">
-                                                <HeadlessMenuItem v-slot="{ active }">
-                                                    <div class="p-1">
-                                                        <NuxtLink :class="[active ? 'bg-primary text-white' : '', 'group flex w-full items-center rounded-md px-2 py-2 gap-3']" :to="subItem.link">
-                                                            <Icon :name="subItem.icon" class="shrink-0 size-5 opacity-75" />
-                                                            <span>{{ subItem.name }}</span>
-                                                        </NuxtLink>
-                                                    </div>
-                                                </HeadlessMenuItem>
-                                            </template>
-                                        </div>
-                                    </HeadlessMenuItems>
-                                </div>
-                            </TransitionExpand>
-                        </HeadlessMenu>
                     </template>
-                    
-                    <!-- إضافة زر Contact Us بجانب Services -->
-                    <li class="group relative">
-                        <button class="group relative overflow-hidden flex items-center px-4 py-8" @click="openContactModal">
-                            <Icon name="ph:phone-light" class="z-20 mr-2 h-6 w-6 text-slate-600" />
-                            <span class="z-20 font-semibold">Kontakt Os</span>
-                            <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
-                        </button>
-                    </li>
                 </ul>
 
                 <!-- الأزرار الهامة - سطح المكتب -->
@@ -287,36 +271,20 @@ watch(
                 <div v-if="mobileMenuOpen" class="lg:hidden bg-white shadow-lg mt-2 rounded-lg py-4 border border-gray-200">
                     <ul class="space-y-2">
                         <template v-for="item in headerMenu" :key="item.link">
-                            <li v-if="item.subMenus.length === 0">
+                            <li v-if="item.link.startsWith('#')">
+                                <button class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left transition-colors" @click="scrollToSection(item.link)">
+                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
+                                    <span class="font-medium">{{ item.name }}</span>
+                                </button>
+                            </li>
+                            
+                            <li v-else>
                                 <NuxtLink :to="item.link" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" @click="toggleMobileMenu">
                                     <Icon :name="item.icon" class="mr-3 h-5 w-5" />
                                     <span class="font-medium">{{ item.name }}</span>
                                 </NuxtLink>
                             </li>
-
-                            <li v-else>
-                                <div class="px-4 py-3 font-medium text-gray-700 flex items-center">
-                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
-                                    <span>{{ item.name }}</span>
-                                </div>
-                                <ul class="ml-6 space-y-1 mt-1 border-l-2 border-gray-100 pl-2">
-                                    <li v-for="subItem in item.subMenus" :key="subItem.link">
-                                        <NuxtLink :to="subItem.link" class="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" @click="toggleMobileMenu">
-                                            <Icon :name="subItem.icon" class="mr-3 h-4 w-4" />
-                                            <span class="text-sm">{{ subItem.name }}</span>
-                                        </NuxtLink>
-                                    </li>
-                                </ul>
-                            </li>
                         </template>
-
-                        <!-- إضافة زر Contact Us في قائمة الهاتف -->
-                        <li>
-                            <button class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left transition-colors" @click="openContactModal(); toggleMobileMenu();">
-                                <Icon name="ph:phone-light" class="mr-3 h-5 w-5" />
-                                <span class="font-medium">Kontakt Os</span>
-                            </button>
-                        </li>
 
                         <!-- زر Login/Profile في قائمة الهاتف -->
                         <li class="border-t border-gray-200 pt-3 mt-3">

@@ -1,9 +1,9 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    // const userStore = useUserStore();
-    // await userStore.fetchAuthUser();
-    // if (!userStore.user) {
-    //     return navigateTo('/login');
-    // }
+    const userStore = useUserStore();
+    await userStore.fetchAuthUser();
+    if (!userStore.user) {
+        return navigateTo('/login');
+    }
 
 //  const tokenCookie = useCookie('auth_token')
 //   const userTypeCookie = useCookie('user_type')
