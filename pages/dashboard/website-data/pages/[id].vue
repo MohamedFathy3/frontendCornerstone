@@ -233,6 +233,8 @@ async function updateSection() {
         await refresh();
         await closeModal();
     }
+    console.log("datasss", data)
+
     if (error.value) {
         useToast({ title: 'Error', message: data.value.message, type: 'error', duration: 5000 });
     }
@@ -284,12 +286,12 @@ async function updateSection() {
                                 </div>
                             </div>
                             <div class="lg:flex lg:justify-center">
-                                <div class="flex items-center gap-5" data-tw-merge>
+                                <!-- <div class="flex items-center gap-5" data-tw-merge>
                                     <input :id="'section-active-switch-' + section.slug" v-model="section.active" class="form-checkbox-input" type="checkbox" @change="toggleSectionActiveStatus(section.id)" />
                                     <label :for="'section-active-switch-' + section.slug" class="cursor-pointer text-sm font-medium capitalize">
                                         <span :class="[section.active ? 'text-success' : 'text-danger', 'font-semibold transition-all']" v-html="section.active ? 'Active' : 'Inactive'"></span>
                                     </label>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="lg:flex lg:justify-end">
                                 <button class="btn btn-secondary !px-6 btn-sm" @click="openModal(pageIndex)">Edit</button>

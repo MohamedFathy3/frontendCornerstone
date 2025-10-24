@@ -180,146 +180,209 @@ watch(
 </script>
 
 <template>
-    <div class="bg-white px-2 shadow-lg dark:bg-slate-900 -intro-y !z-[999]">
-        <div class="mx-auto container px-4 md:px-8">
-            <div class="flex items-center justify-between gap-4 md:gap-8 duration-300 w-full">
+    <div class="bg-white shadow-lg dark:bg-slate-900 sticky top-0 z-50 w-full">
+        <div class="mx-auto w-full px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
                 <!-- الشعار -->
-                <div class="intro-x shrink-0">
-                    <NuxtLink :to="'/'">
-                        <NuxtImg v-if="brand.logo" :alt="brand.name" :src="brand.logo" :title="brand.name" class="h-10 md:h-14 w-full" height="100%" loading="lazy" preload quality="80" width="100%" />
+                <div class="flex-shrink-0">
+                    <NuxtLink to="/" class="flex items-center">
+                        <NuxtImg 
+                            v-if="brand.logo" 
+                            :alt="brand.name" 
+                            :src="brand.logo" 
+                            :title="brand.name" 
+                            class="h-8 w-auto sm:h-10 md:h-12"
+                            height="100%" 
+                            loading="lazy" 
+                            preload 
+                            quality="80" 
+                            width="100%" 
+                        />
+                        <span v-else class="text-xl font-bold text-gray-900">{{ brand.name }}</span>
                     </NuxtLink>
                 </div>
 
-                <!-- قائمة الهواتف - أيقونة القائمة -->
-                <div class="lg:hidden flex items-center gap-2">
-                    <!-- زر Login/Profile للهواتف -->
-                    <NuxtLink v-if="isLoggedIn" :to="userRole === 'employee' ? '/profile' : '/profile'" class="btn btn-sm btn-outline">
-                        <Icon name="ph:user-light" class="h-4 w-4" />
-                    </NuxtLink>
-                    <NuxtLink v-else to="/auth" class="btn btn-sm btn-outline">
-                        <Icon name="ph:sign-in-light" class="h-4 w-4" />
-                    </NuxtLink>
-
-                    <!-- الأزرار المهمة للهواتف -->
-                    <button class="btn btn-sm btn-outline" @click="openContactModal">
-                        <Icon name="ph:phone-light" class="h-4 w-4" />
-                    </button>
-
-                    <!-- زر قائمة الهاتف -->
-                    <button class="btn btn-sm btn-outline" @click="toggleMobileMenu">
-                        <Icon :name="mobileMenuOpen ? 'ph:x-light' : 'ph:list-light'" class="h-4 w-4" />
-                    </button>
-                </div>
-
-                <!-- قائمة سطح المكتب - للشاشات المتوسطة والكبيرة -->
-                <ul class="hidden lg:flex items-center gap-4 text-[14px] xl:text-[16px]">
+                <!-- قائمة سطح المكتب - للشاشات الكبيرة -->
+                <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2">
                     <template v-for="item in headerMenu" :key="item.link">
-                        <li v-if="item.link.startsWith('#')" class="group relative">
-                            <button class="relative overflow-hidden flex items-center px-4 py-8 cursor-pointer" @click="scrollToSection(item.link)">
-                                <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
-                                <span class="z-20 font-semibold">{{ item.name }}</span>
-                                <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
+                        <div v-if="item.link.startsWith('#')" class="relative group">
+                            <button 
+                                @click="scrollToSection(item.link)"
+                                class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
+                            >
+                                <Icon :name="item.icon" class="w-4 h-4 mr-2" />
+                                {{ item.name }}
                             </button>
-                        </li>
+                        </div>
                         
-                        <li v-else class="group relative">
-                            <NuxtLink :to="item.link" class="relative overflow-hidden flex items-center px-4 py-8">
-                                <Icon :name="item.icon" class="z-20 mr-2 h-6 w-6 text-slate-600" />
-                                <span class="z-20 font-semibold">{{ item.name }}</span>
-                                <div class="z-10 absolute bottom-0 left-0 h-0 w-full bg-slate-200 transition-all duration-300 group-hover:h-full" />
-                            </NuxtLink>
-                        </li>
+                        <NuxtLink 
+                            v-else 
+                            :to="item.link"
+                            class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
+                        >
+                            <Icon :name="item.icon" class="w-4 h-4 mr-2" />
+                            {{ item.name }}
+                        </NuxtLink>
                     </template>
-                </ul>
+                </nav>
 
                 <!-- الأزرار الهامة - سطح المكتب -->
-                <div class="hidden lg:flex items-center gap-3">
+                <div class="hidden lg:flex items-center space-x-2">
+                    <!-- زر الاتصال -->
+                 
+
                     <!-- زر Login/Profile -->
                     <template v-if="isLoggedIn">
-                        <NuxtLink :to="userRole === 'employee' ? '/employee/profile' : '/profile'" class="btn btn-outline btn-sm">
-                            <Icon name="ph:user-light" class="mr-2 h-4 w-4" />
+                        <NuxtLink 
+                            :to="userRole === 'employee' ? '/profile' : '/profile'" 
+                            class="btn btn-outline btn-sm flex items-center"
+                        >
+                            <Icon name="ph:user-light" class="w-4 h-4 mr-1" />
                             Profil
                         </NuxtLink>
-                        <button class="btn btn-outline btn-sm btn-error" @click="logout">
-                            <Icon name="ph:sign-out-light" class="mr-2 h-4 w-4" />
+                        <button 
+                            @click="logout" 
+                            class="btn btn-outline btn-sm btn-error flex items-center"
+                        >
+                            <Icon name="ph:sign-out-light" class="w-4 h-4 mr-1" />
                             Log Ud
                         </button>
                     </template>
                     <template v-else>
-                        <NuxtLink to="/auth" class="btn btn-outline btn-sm">
-                            <Icon name="ph:sign-in-light" class="mr-2 h-4 w-4" />
+                        <NuxtLink 
+                            to="/auth" 
+                            class="btn btn-outline btn-sm flex items-center"
+                        >
+                            <Icon name="ph:sign-in-light" class="w-4 h-4 mr-1" />
                             Log Ind
                         </NuxtLink>
 
-                        <!-- زر Aplay_Job - يظهر فقط إذا لم يكن المستخدم مسجل دخول -->
-                        <NuxtLink to="/empley" class="btn btn-outline btn-sm">
-                            <Icon name="ph:briefcase-light" class="mr-2 h-4 w-4" />
+                        <NuxtLink 
+                            to="/empley" 
+                            class="btn btn-outline btn-sm flex items-center"
+                        >
+                            <Icon name="ph:briefcase-light" class="w-4 h-4 mr-1" />
                             Ansøg Job
                         </NuxtLink>
 
-                        <!-- زر company_Login - يظهر فقط إذا لم يكن المستخدم مسجل دخول -->
-                        <NuxtLink to="/company" class="btn btn-outline btn-sm">
-                            <Icon name="ph:buildings-light" class="mr-2 h-4 w-4" />
+                        <NuxtLink 
+                            to="/company" 
+                            class="btn btn-outline btn-sm flex items-center"
+                        >
+                            <Icon name="ph:buildings-light" class="w-4 h-4 mr-1" />
                             Virksomhed
                         </NuxtLink>
                     </template>
                 </div>
+
+                <!-- قائمة الهواتف والتابلت -->
+                <div class="flex lg:hidden items-center space-x-2">
+                    <!-- زر الاتصال للهواتف -->
+                    <button 
+                        @click="openContactModal"
+                        class="btn btn-ghost btn-sm p-2"
+                    >
+                        <Icon name="ph:phone-light" class="w-5 h-5" />
+                    </button>
+
+                    <!-- زر المستخدم للهواتف -->
+                    <template v-if="isLoggedIn">
+                        <NuxtLink 
+                            :to="userRole === 'employee' ? '/profile' : '/profile'" 
+                            class="btn btn-ghost btn-sm p-2"
+                        >
+                            <Icon name="ph:user-light" class="w-5 h-5" />
+                        </NuxtLink>
+                    </template>
+                    <template v-else>
+                        <NuxtLink 
+                            to="/auth" 
+                            class="btn btn-ghost btn-sm p-2"
+                        >
+                            <Icon name="ph:sign-in-light" class="w-5 h-5" />
+                        </NuxtLink>
+                    </template>
+
+                    <!-- زر قائمة الهاتف -->
+                    <button 
+                        @click="toggleMobileMenu"
+                        class="btn btn-ghost btn-sm p-2"
+                    >
+                        <Icon :name="mobileMenuOpen ? 'ph:x-light' : 'ph:list-light'" class="w-5 h-5" />
+                    </button>
+                </div>
             </div>
 
-            <!-- قائمة الهواتف المنزلقة -->
-            <Transition name="slide-down">
-                <div v-if="mobileMenuOpen" class="lg:hidden bg-white shadow-lg mt-2 rounded-lg py-4 border border-gray-200">
-                    <ul class="space-y-2">
+            <!-- قائمة الهواتف والتابلت المنزلقة -->
+            <Transition
+                enter-active-class="transition-all duration-300 ease-out"
+                enter-from-class="opacity-0 max-h-0"
+                enter-to-class="opacity-100 max-h-96"
+                leave-active-class="transition-all duration-300 ease-in"
+                leave-from-class="opacity-100 max-h-96"
+                leave-to-class="opacity-0 max-h-0"
+            >
+                <div 
+                    v-if="mobileMenuOpen" 
+                    class="lg:hidden border-t border-gray-200 bg-white py-4 shadow-lg"
+                >
+                    <div class="space-y-2 px-4">
+                        <!-- قائمة التنقل -->
                         <template v-for="item in headerMenu" :key="item.link">
-                            <li v-if="item.link.startsWith('#')">
-                                <button class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left transition-colors" @click="scrollToSection(item.link)">
-                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">{{ item.name }}</span>
+                            <div v-if="item.link.startsWith('#')" class="w-full">
+                                <button 
+                                    @click="scrollToSection(item.link)"
+                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                                >
+                                    <Icon :name="item.icon" class="w-5 h-5 mr-3" />
+                                    {{ item.name }}
                                 </button>
-                            </li>
+                            </div>
                             
-                            <li v-else>
-                                <NuxtLink :to="item.link" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" @click="toggleMobileMenu">
-                                    <Icon :name="item.icon" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">{{ item.name }}</span>
-                                </NuxtLink>
-                            </li>
+                            <NuxtLink 
+                                v-else 
+                                :to="item.link"
+                                @click="toggleMobileMenu"
+                                class="flex items-center w-full px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                            >
+                                <Icon :name="item.icon" class="w-5 h-5 mr-3" />
+                                {{ item.name }}
+                            </NuxtLink>
                         </template>
 
-                        <!-- زر Login/Profile في قائمة الهاتف -->
-                        <li class="border-t border-gray-200 pt-3 mt-3">
-                            <template v-if="isLoggedIn">
-                                <NuxtLink :to="userRole === 'employee' ? '/profile' : '/profile'" class="flex items-center px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" @click="toggleMobileMenu">
-                                    <Icon name="ph:user-light" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">Profil</span>
+                        <!-- الأزرار الإضافية للهواتف -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                            <template v-if="!isLoggedIn">
+                                <NuxtLink 
+                                    to="/empley"
+                                    @click="toggleMobileMenu"
+                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-green-700 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                                >
+                                    <Icon name="ph:briefcase-light" class="w-5 h-5 mr-3" />
+                                    Ansøg Job
                                 </NuxtLink>
-                                <button class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg w-full text-left transition-colors" @click="logout(); toggleMobileMenu();">
-                                    <Icon name="ph:sign-out-light" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">Log Ud</span>
+                                
+                                <NuxtLink 
+                                    to="/company"
+                                    @click="toggleMobileMenu"
+                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-purple-700 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors duration-200"
+                                >
+                                    <Icon name="ph:buildings-light" class="w-5 h-5 mr-3" />
+                                    Virksomhed
+                                </NuxtLink>
+                            </template>
+                            
+                            <template v-if="isLoggedIn">
+                                <button 
+                                    @click="logout(); toggleMobileMenu();"
+                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-red-700 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                                >
+                                    <Icon name="ph:sign-out-light" class="w-5 h-5 mr-3" />
+                                    Log Ud
                                 </button>
                             </template>
-                            <template v-else>
-                                <NuxtLink to="/auth" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" @click="toggleMobileMenu">
-                                    <Icon name="ph:sign-in-light" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">Log Ind</span>
-                                </NuxtLink>
-                            </template>
-                        </li>
-
-                        <!-- الأزرار المهمة في قائمة الهاتف - تظهر فقط إذا لم يكن المستخدم مسجل دخول -->
-                        <template v-if="!isLoggedIn">
-                            <li class="border-t border-gray-200 pt-3 mt-3">
-                                <NuxtLink to="/empley" class="flex items-center px-4 py-3 text-green-600 hover:bg-green-50 rounded-lg mb-2 transition-colors" @click="toggleMobileMenu">
-                                    <Icon name="ph:briefcase-light" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">Ansøg Job</span>
-                                </NuxtLink>
-                                <NuxtLink to="/company" class="flex items-center px-4 py-3 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" @click="toggleMobileMenu">
-                                    <Icon name="ph:buildings-light" class="mr-3 h-5 w-5" />
-                                    <span class="font-medium">Virksomhed Login</span>
-                                </NuxtLink>
-                            </li>
-                        </template>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </Transition>
         </div>
@@ -358,20 +421,6 @@ watch(
 </template>
 
 <style scoped>
-.slide-down-enter-active,
-.slide-down-leave-active {
-    transition: all 0.3s ease;
-    max-height: 500px;
-    overflow: hidden;
-}
-
-.slide-down-enter-from,
-.slide-down-leave-to {
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(-10px);
-}
-
 /* تحسينات للـ responsive */
 @media (max-width: 1024px) {
     .container {
@@ -387,30 +436,79 @@ watch(
     }
 }
 
-/* تحسينات للشاشات المتوسطة (600px - 1200px) */
-@media (min-width: 601px) and (max-width: 1199px) {
-    .hidden.lg\\:flex {
-        display: none !important;
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 640px) {
+    .flex h-16 {
+        height: 4rem;
     }
     
-    .lg\\:hidden {
-        display: flex !important;
-    }
-}
-
-/* تحسينات للهواتف */
-@media (max-width: 600px) {
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
+    .h-8 {
+        height: 2rem;
     }
     
     .h-10 {
         height: 2.5rem;
     }
     
-    .h-14 {
-        height: 3.5rem;
+    .space-x-2 > * + * {
+        margin-left: 0.5rem;
     }
+}
+
+/* تحسينات للتابلت */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .hidden.lg\:flex {
+        display: none !important;
+    }
+    
+    .lg\:hidden {
+        display: flex !important;
+    }
+}
+
+/* تحسينات للظهور والاختفاء */
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* تحسينات للزر */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
 }
 </style>

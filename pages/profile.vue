@@ -844,17 +844,17 @@ async function updateProfile() {
             formData.append('password', editForm.password)
         }
 
-        // المصفوفات
-        editForm.languages.forEach((lang, index) => {
-            if (lang && lang.trim()) {
-                formData.append(`languages[${index}]`, lang.trim())
-            }
+        // ✅ إصلاح: إرسال المصفوفات بشكل صحيح
+        // تنظيف اللغات من القيم الفارغة
+        const cleanLanguages = editForm.languages.filter(lang => lang && lang.trim())
+        cleanLanguages.forEach((lang, index) => {
+            formData.append(`languages[${index}]`, lang.trim())
         })
 
-        editForm.favorite_work.forEach((work, index) => {
-            if (work && work.trim()) {
-                formData.append(`favorite_work[${index}]`, work.trim())
-            }
+        // تنظيف العمل المفضل من القيم الفارغة
+        const cleanFavoriteWork = editForm.favorite_work.filter(work => work && work.trim())
+        cleanFavoriteWork.forEach((work, index) => {
+            formData.append(`favorite_work[${index}]`, work.trim())
         })
 
         // الملفات
@@ -862,44 +862,66 @@ async function updateProfile() {
         if (editForm.image) formData.append('image', editForm.image)
         if (editForm.application) formData.append('application', editForm.application)
 
-        console.log('📤 Update data prepared')
+        // ✅ Debug: طباعة البيانات المرسلة
+        console.log('📤 البيانات المرسلة:')
+        console.log('🔹 اللغات:', cleanLanguages)
+        console.log('🔹 العمل المفضل:', cleanFavoriteWork)
 
-        // ✅ استخدم useApiFetch مع الـ endpoint الصحيح
+        for (let [key, value] of formData.entries()) {
+            console.log(`📝 ${key}:`, value)
+        }
+
         const { data, error } = await useApiFetch(`/api/employee/profile/update/${employeeId}`, {
             method: 'POST',
             body: formData,
         })
 
-        console.log('📦 Update response:', data.value)
+        console.log('📦 Update response data:', data.value)
         console.log('❌ Update error:', error.value)
 
-        // تحقق إذا كان الـ response HTML
-        if (data.value && typeof data.value === 'string' && data.value.includes('<!DOCTYPE html>')) {
-            throw new Error('الخادم يرجع صفحة HTML بدلاً من JSON. تحقق من إعدادات الـ proxy.')
-        }
-
         if (error.value) {
-            throw new Error(error.value.data?.message || 'Kunne ikke opdatere profil')
+            console.error('🚨 API Error:', error.value)
+            throw new Error(error.value.data?.message || error.value.message || 'Kunne ikke opdatere profil')
         }
 
-        if (data.value && data.value.success) {
-            // تحديث البيانات المحلية
-            if (employeeData.value && data.value.data) {
-                Object.assign(employeeData.value, data.value.data)
+        const responseData = data.value
+        console.log('🔍 Response data analysis:', responseData)
+
+        if (responseData && responseData.result === 'Success') {
+            // ✅ إصلاح: تحديث البيانات المحلية بشكل صحيح
+            if (employeeData.value && responseData.data) {
+                // تحديث كل الحقول بما فيها المصفوفات
+                employeeData.value = {
+                    ...employeeData.value,
+                    ...responseData.data,
+                    // تأكد من تحديث المصفوفات
+                    languages: cleanLanguages.length > 0 ? cleanLanguages : [''],
+                    favorite_work: cleanFavoriteWork.length > 0 ? cleanFavoriteWork : ['']
+                }
             }
 
-            // إظهار toast ناجح
+            // ✅ إصلاح: تحديث نموذج التحرير أيضاً
+            Object.assign(editForm, {
+                languages: cleanLanguages.length > 0 ? [...cleanLanguages] : [''],
+                favorite_work: cleanFavoriteWork.length > 0 ? [...cleanFavoriteWork] : ['']
+            })
+
+            console.log('✅ Employee data updated locally:', employeeData.value)
+
             useToast({
                 title: 'Succes',
-                message: 'Profil opdateret succesfuldt!',
+                message: responseData.message || 'Profil opdateret succesfuldt!',
                 type: 'success',
                 duration: 3000,
             })
 
-            // الخروج من وضع التعديل
             isEditMode.value = false
+            console.log('✅ Profile updated successfully, edit mode closed')
+            
+        } else if (responseData && responseData.message) {
+            throw new Error(responseData.message)
         } else {
-            throw new Error('Ukendt fejl under opdatering')
+            throw new Error('Uventet svar fra serveren')
         }
 
     } catch (err: any) {
@@ -907,7 +929,7 @@ async function updateProfile() {
         
         useToast({
             title: 'Fejl',
-            message: err.message || 'Noget gik galt. Prøv venligst igen.',
+            message: err.message || err.data?.message || 'Noget gik galt. Prøv venligst igen.',
             type: 'error',
             duration: 5000,
         })
@@ -915,6 +937,7 @@ async function updateProfile() {
         updating.value = false
     }
 }
+
 // إدارة اللغات
 function addLanguage() {
     console.log('➕ Adding new language field')
@@ -995,6 +1018,20 @@ function toggleEditMode() {
     
     if (isEditMode.value && employeeData.value) {
         console.log('📝 Entering edit mode, filling form...')
+        
+        // ✅ إصلاح: تعبئة المصفوفات بشكل صحيح
+        const currentLanguages = Array.isArray(employeeData.value.languages) 
+            ? employeeData.value.languages.filter((lang: string) => lang && lang.trim())
+            : employeeData.value.languages 
+                ? [employeeData.value.languages].filter((lang: string) => lang && lang.trim())
+                : ['']
+
+        const currentFavoriteWork = Array.isArray(employeeData.value.favorite_work) 
+            ? employeeData.value.favorite_work.filter((work: string) => work && work.trim())
+            : employeeData.value.favorite_work 
+                ? [employeeData.value.favorite_work].filter((work: string) => work && work.trim())
+                : ['']
+
         // تعبئة النموذج بالبيانات الحالية
         Object.assign(editForm, {
             name: employeeData.value.name || '',
@@ -1009,15 +1046,14 @@ function toggleEditMode() {
             skills: employeeData.value.skills || '',
             experience_certificate: employeeData.value.experience_certificate || '',
             type_job: employeeData.value.type_job || 'part_time',
-            languages: Array.isArray(employeeData.value.languages) 
-                ? [...employeeData.value.languages] 
-                : [employeeData.value.languages || ''],
-            favorite_work: Array.isArray(employeeData.value.favorite_work) 
-                ? [...employeeData.value.favorite_work] 
-                : [employeeData.value.favorite_work || ''],
+            languages: currentLanguages.length > 0 ? [...currentLanguages] : [''],
+            favorite_work: currentFavoriteWork.length > 0 ? [...currentFavoriteWork] : [''],
             password: ''
         })
+        
         console.log('📝 Edit form filled with current data:', editForm)
+        console.log('🗣️ Languages in form:', editForm.languages)
+        console.log('💼 Favorite work in form:', editForm.favorite_work)
     } else {
         console.log('👀 Exiting edit mode, showing profile view')
     }
