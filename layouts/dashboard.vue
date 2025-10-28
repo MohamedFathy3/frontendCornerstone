@@ -15,17 +15,17 @@ const menu = ref([
                 icon: 'ph:globe-hemisphere-west-light',
                 subMenus: [],
             },
-            { name: 'Tjenester', path: '/dashboard/website-data/services', icon: 'ph:grid-four-light', subMenus: [] },
+            { name: 'services', path: '/dashboard/website-data/services', icon: 'ph:grid-four-light', subMenus: [] },
             { name: 'Pages', path: '/dashboard/website-data/pages', icon: 'ph:layout-light', subMenus: [] },
             // { name: 'Media', path: '/dashboard/website-data/media', icon: 'ph:image-light', subMenus: [] },
             // { name: 'Team', path: '/dashboard/website-data/team', icon: 'ph:user-circle-plus', subMenus: [] },
         ],
     },
-    { name: 'Kontaktbeskeder', path: '/dashboard/messages', icon: 'ph:envelope-light', subMenus: [] },
-    { name: 'Medarbejdere', path: '/dashboard/employees', icon: 'ph:users-duotone', subMenus: [] },
-    { name: 'Virksomhed', path: '/dashboard/company', icon: 'ph:gear-six-light', subMenus: [] },
+    { name: 'messages', path: '/dashboard/messages', icon: 'ph:envelope-light', subMenus: [] },
+    // { name: 'Medarbejdere', path: '/dashboard/employees', icon: 'ph:users-duotone', subMenus: [] },
+    { name: 'company', path: '/dashboard/company', icon: 'ph:gear-six-light', subMenus: [] },
 
-    { name: 'Indstillinger', path: '/dashboard/settings', icon: 'ph:gear-six-light', subMenus: [] },
+    { name: 'settings', path: '/dashboard/settings', icon: 'ph:gear-six-light', subMenus: [] },
 ]);
 
 const userStore = useUserStore();

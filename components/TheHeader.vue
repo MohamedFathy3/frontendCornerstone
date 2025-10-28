@@ -3,10 +3,10 @@ import { email, helpers, required } from '@vuelidate/validators';
 import { useVuelidate } from '@vuelidate/core';
 
 const headerMenu = ref([
-    { name: 'Hjem', link: '/', icon: 'ph:house-line-light' },
-    { name: 'Om Os', link: '/about', icon: 'ph:info-light' },
-    { name: 'partnere', link: '#services', icon: 'ph:grid-four-light' },
-    { name: 'Kontakt', link: '#contact', icon: 'ph:phone-light' },
+    { name: 'home', link: '/', icon: 'ph:house-line-light' },
+    { name: 'about', link: '/about', icon: 'ph:info-light' },
+    { name: 'project', link: '#services', icon: 'ph:grid-four-light' },
+    { name: 'contact', link: '#contact', icon: 'ph:phone-light' },
 ]);
 
 const contactButton = useSettingValue('header_button');
@@ -38,14 +38,14 @@ const resetContactForm = async () => {
 };
 
 const rules = reactive({
-    name: { required: helpers.withMessage('Navn er påkrævet', required) },
+    name: { required: helpers.withMessage('name er required', required) },
     email: {
-        required: helpers.withMessage('E-mail er påkrævet', required),
-        email: helpers.withMessage('Ugyldig e-mail format', email),
+        required: helpers.withMessage('E-mail er required', required),
+        email: helpers.withMessage('email e-mail format', email),
     },
-    subject: { required: helpers.withMessage('Emne er påkrævet', required) },
-    content: { required: helpers.withMessage('Besked er påkrævet', required) },
-    countryId: { required: helpers.withMessage('Land er påkrævet', required) },
+    subject: { required: helpers.withMessage('subject er required', required) },
+    content: { required: helpers.withMessage('Besked er required', required) },
+    countryId: { required: helpers.withMessage('Land er required', required) },
 });
 const v$ = useVuelidate(rules, contactForm);
 
@@ -69,7 +69,7 @@ async function sendMessage() {
     if (data.value) {
         useToast({
             title: 'Sendt Succesfuldt',
-            message: 'CSM vil kontakte dig snart',
+            message: 'CSM vil required dig snart',
             type: 'success',
             duration: 5000,
         });
@@ -77,7 +77,7 @@ async function sendMessage() {
     }
 
     if (error.value) {
-        useToast({ title: 'Fejl', message: error.value.message, type: 'error', duration: 5000 });
+        useToast({ title: 'tilte', message: error.value.message, type: 'error', duration: 5000 });
     }
     formIsLoading.value = false;
 }
@@ -205,17 +205,17 @@ watch(
                             quality="80" 
                             width="100%" 
                         />
-                        <span v-else class="text-xl font-bold text-gray-900">{{ brand.name }}</span>
+                        <span v-else class="text-xl font-bold text-[#a93ecb]">{{ brand.name }}</span>
                     </NuxtLink>
                 </div>
 
                 <!-- قائمة سطح المكتب - للشاشات الكبيرة -->
-                <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2">
+                <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2 text-[#a93ecb]">
                     <template v-for="item in headerMenu" :key="item.link">
-                        <div v-if="item.link.startsWith('#')" class="relative group">
+                        <div v-if="item.link.startsWith('#')" class="relative group text-[#a93ecb]">
                             <button 
                                 @click="scrollToSection(item.link)"
-                                class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
+                                class="flex items-center px-3 py-2 text-sm font-medium text-[#a93ecb] hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
                             >
                                 <Icon :name="item.icon" class="w-4 h-4 mr-2" />
                                 {{ item.name }}
@@ -225,7 +225,7 @@ watch(
                         <NuxtLink 
                             v-else 
                             :to="item.link"
-                            class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
+                            class="flex items-center px-3 py-2 text-sm font-medium text-[#a93ecb] hover:text-blue-600 transition-colors duration-200 rounded-lg hover:bg-gray-50"
                         >
                             <Icon :name="item.icon" class="w-4 h-4 mr-2" />
                             {{ item.name }}
@@ -240,44 +240,19 @@ watch(
 
                     <!-- زر Login/Profile -->
                     <template v-if="isLoggedIn">
-                        <NuxtLink 
-                            :to="userRole === 'employee' ? '/profile' : '/profile'" 
-                            class="btn btn-outline btn-sm flex items-center"
-                        >
-                            <Icon name="ph:user-light" class="w-4 h-4 mr-1" />
-                            Profil
-                        </NuxtLink>
-                        <button 
-                            @click="logout" 
-                            class="btn btn-outline btn-sm btn-error flex items-center"
-                        >
-                            <Icon name="ph:sign-out-light" class="w-4 h-4 mr-1" />
-                            Log Ud
-                        </button>
+                       
                     </template>
                     <template v-else>
-                        <NuxtLink 
-                            to="/auth" 
-                            class="btn btn-outline btn-sm flex items-center"
-                        >
-                            <Icon name="ph:sign-in-light" class="w-4 h-4 mr-1" />
-                            Log Ind
-                        </NuxtLink>
+                    
 
-                        <NuxtLink 
-                            to="/empley" 
-                            class="btn btn-outline btn-sm flex items-center"
-                        >
-                            <Icon name="ph:briefcase-light" class="w-4 h-4 mr-1" />
-                            Ansøg Job
-                        </NuxtLink>
+                      
 
                         <NuxtLink 
                             to="/company" 
                             class="btn btn-outline btn-sm flex items-center"
                         >
                             <Icon name="ph:buildings-light" class="w-4 h-4 mr-1" />
-                            Virksomhed
+                            application form
                         </NuxtLink>
                     </template>
                 </div>
@@ -333,15 +308,15 @@ watch(
                     v-if="mobileMenuOpen" 
                     class="lg:hidden border-t border-gray-200 bg-white py-4 shadow-lg"
                 >
-                    <div class="space-y-2 px-4">
+                    <div class="space-y-2 px-4 text-[#a93ecb]">
                         <!-- قائمة التنقل -->
-                        <template v-for="item in headerMenu" :key="item.link">
-                            <div v-if="item.link.startsWith('#')" class="w-full">
+                        <template v-for="item in headerMenu" :key="item.link" >
+                            <div v-if="item.link.startsWith('#')" class="w-full text-[#a93ecb]">
                                 <button 
                                     @click="scrollToSection(item.link)"
-                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                                    class="flex text-[#a93ecb] items-center w-full px-3 py-3 text-base font-medium hover:text-[#a93ecb] hover:bg-gray-50 rounded-lg transition-colors duration-200"
                                 >
-                                    <Icon :name="item.icon" class="w-5 h-5 mr-3" />
+                                    <Icon :name="item.icon" class="w-5 h-5 mr-3 text-[#a93ecb] " />
                                     {{ item.name }}
                                 </button>
                             </div>
@@ -360,14 +335,7 @@ watch(
                         <!-- الأزرار الإضافية للهواتف -->
                         <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
                             <template v-if="!isLoggedIn">
-                                <NuxtLink 
-                                    to="/empley"
-                                    @click="toggleMobileMenu"
-                                    class="flex items-center w-full px-3 py-3 text-base font-medium text-green-700 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                                >
-                                    <Icon name="ph:briefcase-light" class="w-5 h-5 mr-3" />
-                                    Ansøg Job
-                                </NuxtLink>
+                            
                                 
                                 <NuxtLink 
                                     to="/company"
@@ -375,7 +343,7 @@ watch(
                                     class="flex items-center w-full px-3 py-3 text-base font-medium text-purple-700 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors duration-200"
                                 >
                                     <Icon name="ph:buildings-light" class="w-5 h-5 mr-3" />
-                                    Virksomhed
+                                    company
                                 </NuxtLink>
                             </template>
                             
@@ -385,7 +353,7 @@ watch(
                                     class="flex items-center w-full px-3 py-3 text-base font-medium text-red-700 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
                                 >
                                     <Icon name="ph:sign-out-light" class="w-5 h-5 mr-3" />
-                                    Log Ud
+                                    logout
                                 </button>
                             </template>
                         </div>
@@ -399,7 +367,7 @@ watch(
             <template #content>
                 <div>
                     <div class="section-title">{{ useSettingValue('contact_form_title') ?? 'Forespørgsler' }}</div>
-                    <div class="section-description text-sm mt-1">{{ useSettingValue('contact_form_description') || 'Kontakt os for mere information' }}</div>
+                    <div class="section-description text-sm mt-1">{{ useSettingValue('contact_form_description') || '  for mere information' }}</div>
                     <div class="mt-3 h-1 w-52 bg-warning" />
                 </div>
                 <form class="mt-5 grid gap-3" @submit.prevent="sendMessage">
@@ -415,7 +383,7 @@ watch(
                         keyvalue="id"
                         labelvalue="name"
                         name="country-name"
-                        placeholder="Vælg dit land"
+                        placeholder="country"
                     />
                     <FormInputField v-model="contactForm.content" :disabled="formIsLoading" :errors="v$.content.$errors" name="content" placeholder="Besked" type="textarea" />
                     <button :disabled="formIsLoading" class="w-full btn btn-primary px-6">
@@ -493,6 +461,7 @@ watch(
     border-radius: 0.5rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    color: #a93ecb;
 }
 
 .btn-sm {

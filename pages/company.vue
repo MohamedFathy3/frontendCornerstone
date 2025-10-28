@@ -8,9 +8,9 @@
         >
           <Icon name="mdi:office-building-plus" class="h-12 w-12 text-white" />
         </div>
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Virksomhed</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">application form</h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Registrér din virksomhed og bliv en del af vores partnernetværk
+          Please fill out the form below to register your company with us.
         </p>
       </div>
 
@@ -25,7 +25,7 @@
             class="h-7 w-7 text-green-500 mr-4"
           />
           <span class="text-green-800 font-semibold text-lg">
-            Virksomheden blev registreret med succes!
+            The company has been successfully registered!
           </span>
         </div>
       </div>
@@ -56,60 +56,60 @@
             >
               <div class="w-3 h-10 bg-blue-500 rounded-full"></div>
               <h2 class="text-3xl font-bold text-gray-900">
-                Virksomhedsoplysninger
+                Company Information
               </h2>
             </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
               <div class="space-y-4">
                 <label class="block text-lg font-semibold text-gray-800">
-                  Virksomhedsnavn <span class="text-red-500">*</span>
+                  Company Name <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="company.name"
                   type="text"
                   required
                   class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                  placeholder="Indtast virksomhedsnavn"
+                  placeholder="Enter company name"
                 />
               </div>
 
               <div class="space-y-4">
                 <label class="block text-lg font-semibold text-gray-800">
-                  Ansvarlig persons navn <span class="text-red-500">*</span>
+                  Responsible Person's Name <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="company.responsible_name"
                   type="text"
                   required
                   class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                  placeholder="Indtast ansvarlig persons navn"
+                  placeholder="Enter responsible person's name"
                 />
               </div>
 
               <div class="space-y-4">
                 <label class="block text-lg font-semibold text-gray-800">
-                  E-mailadresse <span class="text-red-500">*</span>
+                  Email Address <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="company.email"
                   type="email"
                   required
                   class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                  placeholder="virksomhed@example.com"
+                  placeholder="company@example.com"
                 />
               </div>
 
               <div class="space-y-4">
                 <label class="block text-lg font-semibold text-gray-800">
-                  Telefonnummer <span class="text-red-500">*</span>
+                  Phone Number <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="company.phone"
                   type="tel"
                   required
                   class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300"
-                  placeholder="Indtast telefonnummer"
+                  placeholder="Enter phone number"
                 />
               </div>
             </div>
@@ -122,20 +122,20 @@
             >
               <div class="w-3 h-10 bg-green-500 rounded-full"></div>
               <h2 class="text-3xl font-bold text-gray-900">
-                Lokationsoplysninger
+                Location Information
               </h2>
             </div>
 
             <div class="space-y-4">
               <label class="block text-lg font-semibold text-gray-800">
-                Kommentar <span class="text-red-500">*</span>
+                Comment <span class="text-red-500">*</span>
               </label>
               <textarea
                 v-model="company.address"
                 required
                 rows="3"
                 class="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 resize-none"
-                placeholder="Skriv din kommentar her"
+                placeholder="Write your comment here"
               ></textarea>
             </div>
           </div>
@@ -145,7 +145,7 @@
             <button
               type="submit"
               :disabled="formLoading"
-              class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-2xl rounded-2xl hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center justify-center"
+              class="w-full py-6 text-[#a93ecb]  font-bold text-2xl rounded-2xl hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center justify-center"
             >
               <Icon
                 v-if="formLoading"
@@ -153,7 +153,7 @@
                 class="h-7 w-7 mr-4"
               />
               <span>
-                {{ formLoading ? 'Behandler registrering...' : 'Registrér virksomhed' }}
+                {{ formLoading ? 'Processing registration...' : 'Register Company' }}
               </span>
             </button>
           </div>
@@ -162,6 +162,7 @@
     </div>
   </div>
 </template>
+  
 
 <script setup lang="ts">
 // Company data structure based on your API fields

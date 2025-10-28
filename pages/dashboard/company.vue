@@ -365,7 +365,7 @@ onUnmounted(() => {
     <div class="flex flex-col gap-5">
         <!-- Header -->
         <div class="flex items-center justify-between">
-            <div class="text-lg font-medium">Virksomhedsadministration</div>
+            <div class="text-lg font-medium">application form</div>
             <div class="text-sm text-gray-500">Total: {{ companiesData?.total || 0 }} virksomheder</div>
         </div>
 
@@ -374,7 +374,7 @@ onUnmounted(() => {
             <FormInputField
                 v-model="serverParams.search"
                 class="lg:col-span-8"
-                placeholder="Søg efter virksomhedsnavn, ansvarlig person, email eller land..."
+                placeholder="ofer..."
                 @input="handleSearchInput"
             />
             <div class="lg:col-span-4 flex gap-2">

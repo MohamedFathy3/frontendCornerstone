@@ -45,15 +45,15 @@ export default defineNuxtConfig({
     nitro: {
         routeRules: {
         '/backend/**': {
-            proxy: 'http://127.0.0.1:8001/**',
+            proxy: 'http://127.0.0.1:8000/**',
             
         },
       
         '/get-geoip/**': {
-            proxy: 'http://127.0.0.1:8001',
+            proxy: 'http://127.0.0.1:8000',
         },
            '/api/**': {
-      proxy: 'http://127.0.0.1:8001/api/**',
+      proxy: 'http://127.0.0.1:8000/api/**',
     }
     },
     compressPublicAssets: true,
